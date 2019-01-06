@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controller.fragments.SinginFragment"
+    android:layout_margin="16dp">
+
+    <!--- Scrollable view -->
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <!-- Head of Fragment with Logo and Title -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logohdpi" />
+
+            <!-- Tree different TextView with different colors -->
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/titleFormStyle"
+                    android:layout_marginRight="6dp"
+                    android:text="Welcome" />
+
+                <TextView
+                    style="@style/titleFormStyle"
+                    android:layout_marginRight="6dp"
+                    android:text="Back"
+                    android:textColor="@color/colorTaxiYellow" />
+
+                <TextView
+                    style="@style/titleFormStyle"
+                    android:text="" />
+
+            </LinearLayout>
+
+            <TextView
+
+                android:id="@+id/helper_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text="Error : vous etes pas beau"
+                android:textColor="#F00"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <!-- Example of TextView and EditText -->
+
+            <TextView
+
+                style="@style/labelStyleForm"
+                android:text="Email :" />
+
+            <EditText
+                android:id="@+id/email_input_form"
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="j.delaveine@example.com"
+                android:inputType="textEmailAddress"
+                android:maxLength="255"
+                android:maxLines="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/labelStyleForm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Password :" />
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:gravity="right"
+                    android:text="Forgot password?"
+                    android:textSize="10sp"
+                    android:textStyle="italic" />
+
+            </LinearLayout>
+
+
+            <EditText
+                android:id="@+id/phone_input_form"
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="*******"
+                android:inputType="textPassword"
+                android:maxLength="15"
+                android:maxLines="1" />
+
+
+
+            <Button
+                android:id="@+id/submit_btn_form"
+                style="@style/rectangleButtonStyle"
+                android:layout_marginTop="10dp"
+                android:text="Sign in" />
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:textAlignment="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="New to TaxiCity?"
+                    android:textSize="19sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" Join now"
+                    android:textColor="@color/colorTaxiYellow"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
+
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <!-- Submit Button-->
+
+
+
+</FrameLayout>

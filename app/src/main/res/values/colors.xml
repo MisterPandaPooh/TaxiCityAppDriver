@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    ß
+    <!-- Custom colors -->
+    <color name="colorTaxiYellow">#F2B94D</color>
+    <color name="colorTaxiBlack">#412C3B</color>
+    <color name="colorSuccess">#00C851</color>
+    <color name="colorWarning">#FF8800</color>
+    <color name="colorDanger">#ff4444</color>
+    <color name="colorInfo">#33b5e5</color>
+    <color name="colorLightenGrey">#bdbdbd</color>
+</resources>

@@ -1,0 +1,195 @@
+{
+  "project_info": {
+    "project_number": "732456000876",
+    "firebase_url": "https://taxicityappdatabase.firebaseio.com",
+    "project_id": "taxicityappdatabase",
+    "storage_bucket": "taxicityappdatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732456000876:android:c6ef25407a78a391",
+        "android_client_info": {
+          "package_name": "example.com.taxiappdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732456000876-gk2t8839mnqpme8ng0as1et2co696uud.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "example.com.taxiappdriver",
+            "certificate_hash": "0a03eef2b4d4f7ff36e8fd8995e43c9d7c6d1124"
+          }
+        },
+        {
+          "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGLhlQb720VhcNLyJxNMuQ--WZsBkspCY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732456000876:android:e8d86c469a728b38",
+        "android_client_info": {
+          "package_name": "example.com.taxicityappdriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732456000876-957bjkb7f8k89dmnaqfdporqfb681e9r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "example.com.taxicityappdriver",
+            "certificate_hash": "0a03eef2b4d4f7ff36e8fd8995e43c9d7c6d1124"
+          }
+        },
+        {
+          "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGLhlQb720VhcNLyJxNMuQ--WZsBkspCY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732456000876:android:33c40207a88c1493",
+        "android_client_info": {
+          "package_name": "example.com.taxicitydriverapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732456000876-3uttl0b00nkgb646oeciqs0vvi2oougt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "example.com.taxicitydriverapp",
+            "certificate_hash": "0a03eef2b4d4f7ff36e8fd8995e43c9d7c6d1124"
+          }
+        },
+        {
+          "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGLhlQb720VhcNLyJxNMuQ--WZsBkspCY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:732456000876:android:dffaf9d4839520cb",
+        "android_client_info": {
+          "package_name": "taxicity.com.taxicityapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "732456000876-klpdmi31dh2tjic3t4kuc3igkscmv5bs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "taxicity.com.taxicityapp",
+            "certificate_hash": "0a03eef2b4d4f7ff36e8fd8995e43c9d7c6d1124"
+          }
+        },
+        {
+          "client_id": "732456000876-1f0ehv669q1ulbj3om7ck47uisgcc0nu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "taxicity.com.taxicityapp",
+            "certificate_hash": "5a13038184a89413ec58fd85b08d6078e8b58824"
+          }
+        },
+        {
+          "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGLhlQb720VhcNLyJxNMuQ--WZsBkspCY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "732456000876-gmi6q2mqn96nqaq8jda7h3r9gidpf7b9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

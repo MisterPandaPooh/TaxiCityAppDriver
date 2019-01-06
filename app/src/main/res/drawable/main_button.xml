@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- Yellow background for Button with Border Radius and Padding -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle"
+    android:padding="10dp">
+    <solid android:color="@color/colorTaxiYellow"/>
+    <corners android:radius="0dp"/>
+</shape>

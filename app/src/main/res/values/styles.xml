@@ -1,0 +1,52 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+
+    <!-- Styled TextView in Fragment -->
+    <style name="titleFormStyle" parent="android:Widget.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">23sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Styled EditText in Forms -->
+    <style name="inputStyle" parent="android:Widget.EditText">
+        <item name="android:background">@drawable/edittext_background</item>
+        <item name="android:textColor">@color/colorTaxiBlack</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textCursorDrawable">@drawable/custom_cursor</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
+
+    <!-- Styled Label in Forms -->
+    <style name="labelStyleForm" parent="android:Widget.TextView">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16.5sp</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- Styled Button Bottom -->
+    <style name="rectangleButtonStyle" parent="android:Widget.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">20dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:background">@drawable/main_button</item>
+        <item name="android:layout_gravity">bottom</item>
+    </style>
+
+</resources>
