@@ -3,4 +3,30 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="sign_up_title">Sign up</string>
+    <string name="sign_up_title_2">to get more</string>
+    <string name="email_label">Email :</string>
+    <string name="hint_email">j.delaveine@example.com</string>
+    <string name="password_label">Password :</string>
+    <string name="hint_password">*******</string>
+    <string name="confirm_password_lbl">Confirm Password :</string>
+    <string name="firstname_lbl">First name :</string>
+    <string name="firstname_hint">Jean</string>
+    <string name="lastname_lbl">Last name :</string>
+    <string name="lastname_hint">Dubois</string>
+    <string name="phone_number_lbl">Phone Number :</string>
+    <string name="phone_number_hint">0587250797</string>
+    <string name="credit_card_number_lbl">Credit Card Number :</string>
+    <string name="credit_card_number_hint">0000 0000 0000 0000</string>
+    <string name="cvv_hint">CVV</string>
+    <string name="expire_hint">Expire : 012018</string>
+    <string name="sign_up_button">Sign up</string>
+    <string name="new_to_taxicity">New to TaxiCity?</string>
+    <string name="join_now">Join now</string>
+    <string name="sign_in_btn">Sign in</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="welcome">Welcome</string>
+    <string name="back">Back</string>
 </resources>

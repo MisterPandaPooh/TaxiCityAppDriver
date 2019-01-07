@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controller.fragments.SignUpFragment">
+
+
+    <!--- Scrollable view -->
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_vertical_margin">
+
+        <!-- Head of Fragment with Logo and Title -->
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:src="@drawable/logohdpi"
+                android:contentDescription="TODO" />
+
+            <!-- Tree different TextView with different colors -->
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/titleFormStyle"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/sign_up_title"
+                    android:textColor="@color/colorTaxiYellow"
+                    android:layout_marginEnd="6dp" />
+
+                <TextView
+                    style="@style/titleFormStyle"
+                    android:layout_marginRight="6dp"
+                    android:text="@string/sign_up_title_2"
+                    android:layout_marginEnd="6dp" />
+
+
+            </LinearLayout>
+
+            <TextView
+
+                android:id="@+id/helper_form"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:text=""
+                android:textColor="#F00"
+                android:textStyle="italic"
+                android:visibility="gone" />
+
+            <!-- STEP 1 => SignUP email,password,confirm password -->
+
+            <TextView
+
+                style="@style/labelStyleForm"
+                android:text="@string/email_label" />
+
+            <EditText
+                android:id="@+id/email_input_form_signup"
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress"
+                android:maxLength="255"
+                android:maxLines="1"
+                android:importantForAutofill="no" />
+
+
+            <TextView
+                style="@style/labelStyleForm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/password_label" />
+
+
+            <EditText
+                android:id="@+id/password_input_form_signup"
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"
+                android:maxLength="150"
+                android:maxLines="1" />
+
+
+            <TextView
+                style="@style/labelStyleForm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/confirm_password_lbl" />
+
+
+            <EditText
+                android:id="@+id/password_confirm_signup"
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"
+                android:maxLength="150"
+                android:maxLines="1" />
+
+
+            <!--- END STEP 1 -->
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/firstname_lbl"
+                style="@style/labelStyleForm"
+                />
+
+            <EditText
+                android:id="@+id/first_name_input_signup"
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:hint="@string/firstname_hint"
+                android:inputType="text"
+                android:maxLength="20"
+                android:maxLines="1"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lastname_lbl"
+                style="@style/labelStyleForm"
+                />
+
+            <EditText
+                android:id="@+id/last_name_input_signup"
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/lastname_hint"
+                android:inputType="text"
+                android:maxLength="20"
+                android:maxLines="1" />
+
+
+            <TextView
+
+                style="@style/labelStyleForm"
+                android:text="@string/phone_number_lbl" />
+
+            <EditText
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/phone_number_hint"
+                android:maxLines="1"
+                android:id="@+id/phone_input_form"
+                android:inputType="phone"
+                android:importantForAutofill="no" />
+
+
+            <TextView
+
+                style="@style/labelStyleForm"
+                android:text="@string/credit_card_number_lbl" />
+
+            <EditText
+                style="@style/inputStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/credit_card_number_hint"
+                android:maxLines="1"
+                android:id="@+id/credit_card_number"
+                android:inputType="phone"
+                android:maxLength="15"
+                />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="100dp"
+                >
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:hint="@string/cvv_hint"
+                    android:maxLines="1"
+                    android:inputType="number"
+                    style="@style/inputStyle"
+                    android:layout_alignParentLeft="true"
+                    android:width="150dp"/>
+
+                <EditText
+                    android:layout_alignParentRight="true"
+                    style="@style/inputStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/expire_hint"
+                    android:maxLines="1"
+                    android:inputType="number"
+                    android:width="150dp"
+
+                    />
+
+            </RelativeLayout>
+
+
+
+
+
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <!-- Submit Button-->
+    <Button
+        android:id="@+id/submit_btn_form"
+        style="@style/rectangleButtonStyle"
+        android:gravity="bottom"
+        android:textAlignment="center"
+        android:layout_marginTop="10dp"
+        android:text="@string/sign_up_button" />
+
+
+</FrameLayout>

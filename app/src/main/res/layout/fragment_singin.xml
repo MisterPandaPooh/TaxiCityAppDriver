@@ -35,12 +35,12 @@
                 <TextView
                     style="@style/titleFormStyle"
                     android:layout_marginRight="6dp"
-                    android:text="Welcome" />
+                    android:text="@string/welcome" />
 
                 <TextView
                     style="@style/titleFormStyle"
                     android:layout_marginRight="6dp"
-                    android:text="Back"
+                    android:text="@string/back"
                     android:textColor="@color/colorTaxiYellow" />
 
                 <TextView
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:text="Error : vous etes pas beau"
+                android:text=""
                 android:textColor="#F00"
                 android:textStyle="italic"
                 android:visibility="gone" />
@@ -65,14 +65,14 @@
             <TextView
 
                 style="@style/labelStyleForm"
-                android:text="Email :" />
+                android:text="@string/email_label" />
 
             <EditText
                 android:id="@+id/email_input_form"
                 style="@style/inputStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="j.delaveine@example.com"
+                android:hint="@string/hint_email"
                 android:inputType="textEmailAddress"
                 android:maxLength="255"
                 android:maxLines="1" />
@@ -86,7 +86,7 @@
                     style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Password :" />
+                    android:text="@string/password_label" />
 
 
                 <TextView
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:gravity="right"
-                    android:text="Forgot password?"
+                    android:text="@string/forgot_password"
                     android:textSize="10sp"
                     android:textStyle="italic" />
 
@@ -106,7 +106,7 @@
                 style="@style/inputStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="*******"
+                android:hint="@string/hint_password"
                 android:inputType="textPassword"
                 android:maxLength="15"
                 android:maxLines="1" />
@@ -117,7 +117,7 @@
                 android:id="@+id/submit_btn_form"
                 style="@style/rectangleButtonStyle"
                 android:layout_marginTop="10dp"
-                android:text="Sign in" />
+                android:text="@string/sign_in_btn" />
 
 
             <LinearLayout
@@ -131,13 +131,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New to TaxiCity?"
+                    android:text="@string/new_to_taxicity"
                     android:textSize="19sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" Join now"
+                    android:text="@string/join_now"
                     android:textColor="@color/colorTaxiYellow"
                     android:textSize="19sp"
                     android:textStyle="bold" />

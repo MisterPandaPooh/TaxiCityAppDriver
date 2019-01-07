@@ -15,11 +15,12 @@ public class Driver {
     protected String firstName;
     protected String lastName;
     protected String phoneNumber; //long ?
+    protected String email;
     protected long creditCardNumber;
     protected long cVV;
     protected String expireDateCreditCard;
     protected Date createdDate;
-    protected float comissionPerTrip;
+    protected float comissionPerTrip; // ?
     protected double currentLocationLat;
     protected double currentLocationLong;
     protected boolean isBusy;
