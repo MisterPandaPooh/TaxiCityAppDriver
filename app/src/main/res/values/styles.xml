@@ -49,4 +49,9 @@
         <item name="android:layout_gravity">bottom</item>
     </style>
 
+    <style name="labelTripItem" parent="labelStyleForm">
+        <item name="android:textSize">12.5sp</item>
+        <item name="android:layout_margin">0dp</item>
+    </style>
+
 </resources>
