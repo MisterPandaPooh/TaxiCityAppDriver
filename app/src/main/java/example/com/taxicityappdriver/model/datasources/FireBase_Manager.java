@@ -9,6 +9,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -139,22 +140,24 @@ public class FireBase_Manager implements BackEnd<String> {
     }
 
     @Override
-    public void addDriver(Driver driver, final ActionCallBack<String> action) {
-        String email = driver.getEmail();
+    public void addDriver(final Driver driver, final ActionCallBack<String> action) {
+        String email = EncodeString(driver.getEmail());
 
 
+        Log.i(TAG, "addDriver: ");
         final String finalEmailDriver = email;
         //Test if the driver already exist
-        getDriver(finalEmailDriver, new ActionCallBack<Driver>() {
+        getDriver(email, new ActionCallBack<Driver>() {
             @Override
             public void onSuccess(Driver obj) {
                 action.onFailure(new Exception("Driver already Exist !"));
+                Log.i(TAG, "onSuccess: ");
             }
 
             @Override
             public void onFailure(Exception exception) {
                 //If the driver don't exits
-                refDriver.child(finalEmailDriver).setValue(finalEmailDriver).addOnSuccessListener(new OnSuccessListener<Void>() {
+                refDriver.child(finalEmailDriver).setValue(driver).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         action.onSuccess(finalEmailDriver);
@@ -167,6 +170,8 @@ public class FireBase_Manager implements BackEnd<String> {
                         action.onProgress("Failed to add the driver...", 100);
                     }
                 });
+
+                Log.i(TAG, "onFailure: ");
 
             }
 
@@ -181,7 +186,9 @@ public class FireBase_Manager implements BackEnd<String> {
     @Override
     public void removeDriver(final String email, final ActionCallBack<String> action) {
 
-        refDriver.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+        final String emailKey = EncodeString(email);
+
+        refDriver.child(emailKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final Driver value = dataSnapshot.getValue(Driver.class);
@@ -189,10 +196,10 @@ public class FireBase_Manager implements BackEnd<String> {
                 if (value == null) {
                     action.onFailure(new Exception("We can't find the request trip"));
                 } else {
-                    refTrips.child(email).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    refTrips.child(emailKey).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            action.onSuccess(email);
+                            action.onSuccess(emailKey);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -213,17 +220,22 @@ public class FireBase_Manager implements BackEnd<String> {
     //By ID
     @Override
     public void getDriver(final String email, final ActionCallBack<Driver> action) {
+        Log.i(TAG, "getDriver: ");
         final Driver[] drivers = {null};
-        refDriver.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
+        final String emailKey = EncodeString(email);
+        refDriver.child(emailKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 drivers[0] = dataSnapshot.getValue(Driver.class);
 
                 if (drivers[0] == null) {
+                    Log.i(TAG, "onDataChange: FAILURE");
 
                     action.onFailure(new Exception("We can't find the Driver"));
                 } else {
-                    drivers[0].setEmail(email);
+                    Log.i(TAG, "onDataChange: SUCCESS");
+                    Log.i(TAG, emailKey);
+                    drivers[0].setEmail(DecodeString(emailKey));
                     action.onSuccess(drivers[0]);
 
                 }
@@ -240,7 +252,7 @@ public class FireBase_Manager implements BackEnd<String> {
 
     @Override
     public void updateDriver(final Driver toUpdate, final ActionCallBack<String> action) {
-        final String email = toUpdate.getEmail();
+        final String email = EncodeString(toUpdate.getEmail());
 
         Log.e(TAG, "Update Started");
         removeTrip(email, new ActionCallBack<String>() {
@@ -264,13 +276,26 @@ public class FireBase_Manager implements BackEnd<String> {
 
     @Override
     public void signUp(String email, String password, final ActionCallBack<Object> action) {
+        Log.i(TAG, "signUp: ");
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful())
+                if (task.isSuccessful()) {
+                    Log.i(TAG, "onComplete: SUCESSS");
                     action.onSuccess(mAuth.getCurrentUser());
-                else
+                } else {
                     action.onFailure(task.getException());
+                    Log.i(TAG, "onComplete: FAILURE");
+                    Log.i(TAG, task.getException().getMessage());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i(TAG, "onFailure: ");
+                Log.i(TAG, e.getMessage());
+                action.onFailure(e);
+
 
             }
         });
@@ -282,10 +307,23 @@ public class FireBase_Manager implements BackEnd<String> {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful())
+                if (task.isSuccessful()) {
+                    Log.i(TAG, "onComplete: SUCESSS");
                     action.onSuccess(mAuth.getCurrentUser());
-                else
+                } else {
                     action.onFailure(task.getException());
+                    Log.i(TAG, "onComplete: FAILURE");
+                    Log.i(TAG, task.getException().getMessage());
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i(TAG, "onFailure: ");
+                Log.i(TAG, e.getMessage());
+                action.onFailure(e);
+
+
             }
         });
 
@@ -319,6 +357,30 @@ public class FireBase_Manager implements BackEnd<String> {
     @Override
     public Object getCurrentUser() {
         return mAuth.getCurrentUser();
+    }
+
+    @Override
+    public void deleteCurrentUser() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        user.delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User account deleted.");
+                        }
+                    }
+                });
+    }
+
+
+    private static String EncodeString(String string) {
+        return string.replace(".", ",");
+    }
+
+    private static String DecodeString(String string) {
+        return string.replace(",", ".");
     }
 
 }

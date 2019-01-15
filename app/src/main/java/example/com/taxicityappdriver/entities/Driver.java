@@ -9,39 +9,30 @@ import example.com.taxicityappdriver.model.helpers.Helpers;
 
 public class Driver {
 
+    @Exclude
+    protected String email;
 
     protected long idNumber;
-    @Exclude
-    protected String key;
     protected String firstName;
     protected String lastName;
     protected String phoneNumber; //long ?
-    protected String email;
     protected long creditCardNumber;
     protected long cVV;
     protected String expireDateCreditCard;
     protected Date createdDate;
-    protected float comissionPerTrip; // ?
     protected double currentLocationLat;
     protected double currentLocationLong;
     protected boolean isBusy;
     protected int checkAroundAroundKm;
-    protected URL avatar;
 
     //KEY WILL BE EMAIL
 
-    public String getKey() {
-        return key;
-    }
 
-    public void setKey(String key) {
-        this.key = key;
-    }
-
+    @Exclude
     public String getEmail() {
         return email;
     }
-
+    @Exclude
     public void setEmail(String email) {
         this.email = email;
     }
@@ -102,13 +93,6 @@ public class Driver {
         this.expireDateCreditCard = expireDateCreditCard;
     }
 
-    public float getComissionPerTrip() {
-        return comissionPerTrip;
-    }
-
-    public void setComissionPerTrip(float comissionPerTrip) {
-        this.comissionPerTrip = comissionPerTrip;
-    }
 
     public double getCurrentLocationLat() {
         return currentLocationLat;
@@ -124,14 +108,6 @@ public class Driver {
 
     public void setCurrentLocationLong(double currentLocationLong) {
         this.currentLocationLong = currentLocationLong;
-    }
-
-    public boolean isBusy() {
-        return isBusy;
-    }
-
-    public void setBusy(boolean busy) {
-        isBusy = busy;
     }
 
 
@@ -166,15 +142,11 @@ public class Driver {
         this.createdDate = createdDate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public boolean isBusy() {
+        return isBusy;
     }
 
-    public URL getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(URL avatar) {
-        this.avatar = avatar;
+    public void setBusy(boolean busy) {
+        isBusy = busy;
     }
 }

@@ -33,4 +33,6 @@
     <string name="my_history">My trip history</string>
     <string name="parameter">Settings</string>
     <string name="log_out">Log out</string>
+    <string name="id_number">ID Number</string>
+    <string name="tz_hint">342532173</string>
 </resources>

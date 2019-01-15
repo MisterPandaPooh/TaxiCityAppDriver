@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ public class AuthActivity extends AppCompatActivity {
 
         requestAllPermissions();
 
+        db.signOut();
         if (db.isSigned())
             initMainActivity();
         else
@@ -53,7 +55,7 @@ public class AuthActivity extends AppCompatActivity {
         //Adding Welcome Fragment
         if (!signInFragment.isVisible()) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.activity_main_frame_layout, signInFragment).commit();
+                    .add(R.id.main_frame_layout, signInFragment).commit();
         }
     }
 
@@ -78,5 +80,8 @@ public class AuthActivity extends AppCompatActivity {
         }
     }
 
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        requestAllPermissions();
+    }
 }

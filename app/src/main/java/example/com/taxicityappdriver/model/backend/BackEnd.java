@@ -32,5 +32,6 @@ public interface BackEnd<T> {
     void forgotPassword(String email, final ActionCallBack<T> action);
     boolean isSigned();
     Object getCurrentUser();
+    void deleteCurrentUser();
 
 }
