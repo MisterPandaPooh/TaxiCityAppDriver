@@ -25,11 +25,13 @@
         <activity android:name=".controller.activities.MainActivity"
             android:windowSoftInputMode="stateHidden|adjustPan">
 
+
         </activity>
 
 
         <activity android:name=".controller.activities.AuthActivity"
             android:windowSoftInputMode="stateHidden|adjustPan">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

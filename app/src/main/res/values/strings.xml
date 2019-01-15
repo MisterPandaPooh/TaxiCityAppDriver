@@ -29,4 +29,8 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="welcome">Welcome</string>
     <string name="back">Back</string>
+    <string name="waiting_trips">Waiting trips</string>
+    <string name="my_history">My trip history</string>
+    <string name="parameter">Settings</string>
+    <string name="log_out">Log out</string>
 </resources>

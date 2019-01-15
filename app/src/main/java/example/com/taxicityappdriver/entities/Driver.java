@@ -9,9 +9,10 @@ import example.com.taxicityappdriver.model.helpers.Helpers;
 
 public class Driver {
 
-    @Exclude
-    protected long idNumber;
 
+    protected long idNumber;
+    @Exclude
+    protected String key;
     protected String firstName;
     protected String lastName;
     protected String phoneNumber; //long ?
@@ -27,6 +28,23 @@ public class Driver {
     protected int checkAroundAroundKm;
     protected URL avatar;
 
+    //KEY WILL BE EMAIL
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getFirstName() {
         return firstName;

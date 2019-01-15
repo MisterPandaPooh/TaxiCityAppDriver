@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:showIn="navigation_view">
+
+
+    <item android:title="Trips">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/activity_main_drawer_waiting_trips"
+                    android:title="@string/waiting_trips"
+                    android:icon="@drawable/ic_local_taxi_black_24dp"/>
+                <item
+                    android:id="@+id/activity_main_drawer_last_trips"
+                    android:title="@string/my_history"
+                    android:icon="@drawable/ic_history_black_24dp"/>
+            </group>
+        </menu>
+    </item>
+
+
+    <item android:title="Others">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/activity_main_drawer_settings"
+                    android:title="@string/parameter"
+                    android:icon="@drawable/ic_build_black_24dp"/>
+                <item
+                    android:id="@+id/activity_main_drawer_log_out"
+                    android:title="@string/log_out"
+                    android:icon="@drawable/ic_power_settings_new_black_24dp"/>
+            </group>
+        </menu>
+    </item>
+
+
+</menu>
