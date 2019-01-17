@@ -31,7 +31,7 @@ public interface BackEnd<T> {
     void signOut();
     void forgotPassword(String email, final ActionCallBack<T> action);
     boolean isSigned();
-    Object getCurrentUser();
+    Driver getCurrentDriver();
     void deleteCurrentUser();
 
 }

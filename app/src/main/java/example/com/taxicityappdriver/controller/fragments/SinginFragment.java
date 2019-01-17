@@ -58,9 +58,13 @@ public class SinginFragment extends Fragment {
     private EditText emailForgotPassword;
     private static BackEnd db = BackEndFactory.getInstance();
     private AlertDialog alertDialog;
+
+
     private static final String PREFS = "PREFS";
-    private static final String PREFS_EMAIL = "PREF_EMAIL";
-    private static final String PREFS_PASSWORD = "PREF_PASSWORD";
+    private static final String PREFS_EMAIL = "PREFS_EMAIL";
+    private static final String PREFS_PASSWORD = "PREFS_PASSWORD";
+
+
     private Button btnSubmit;
     SharedPreferences sharedPreferences; //BUG !
     private SignUpFragment signUpFragment = null;
@@ -128,30 +132,37 @@ public class SinginFragment extends Fragment {
                   //  return;
 
                 btnSubmit.setEnabled(false);
+                try {
 
-                db.signIn(emailEditText.getText().toString(), passwordEditText.getText().toString(), new ActionCallBack<Object>() {
-                    @Override
-                    public void onSuccess(Object obj) {
-                        initMainActivity();
-                    }
+                    db.signIn(emailEditText.getText().toString(), passwordEditText.getText().toString(), new ActionCallBack<Object>() {
+                        @Override
+                        public void onSuccess(Object obj) {
+                            initMainActivity();
+                        }
 
-                    @Override
-                    public void onFailure(Exception exception) {
-                        helperTextView.setVisibility(View.VISIBLE);
-                        helperTextView.setText(exception.getMessage());
-                        btnSubmit.setEnabled(true);
-                        sharedPreferences
-                                .edit()
-                                .putString(PREFS_EMAIL, emailEditText.getText().toString())
-                                .putString(PREFS_PASSWORD, passwordEditText.getText().toString())
-                                .apply();
-                    }
+                        @Override
+                        public void onFailure(Exception exception) {
+                            helperTextView.setVisibility(View.VISIBLE);
+                            helperTextView.setText(exception.getMessage());
+                            btnSubmit.setEnabled(true);
+                            sharedPreferences
+                                    .edit()
+                                    .putString(PREFS_EMAIL, emailEditText.getText().toString())
+                                    .putString(PREFS_PASSWORD, passwordEditText.getText().toString())
+                                    .apply();
+                        }
 
-                    @Override
-                    public void onProgress(String status, double percent) {
+                        @Override
+                        public void onProgress(String status, double percent) {
 
-                    }
-                });
+                        }
+                    });
+                }
+                catch (Exception e){
+                    helperTextView.setVisibility(View.VISIBLE);
+                    helperTextView.setText(e.getMessage());
+                    btnSubmit.setEnabled(true);
+                }
 
 
             }

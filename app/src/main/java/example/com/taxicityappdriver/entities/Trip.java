@@ -14,34 +14,34 @@ public class Trip {
     public enum TripStatus {AVAILABLE, IN_PROGRESS, FINISHED}
 
     @Exclude
-    private String key;
+    protected String key;
 
-    private Date startingHour; //Not firebase
+    protected Date startingHour; //Not firebase
 
-    private Date endingHour; //Not Firebase
+    protected Date endingHour; //Not Firebase
 
-    private String customerName;
+    protected String customerName;
 
-    private String customerPhone;
+    protected String customerPhone;
 
-    private String customerEmail;
+    protected String customerEmail;
 
 
-    private TripStatus status;
+    protected TripStatus status;
 
-    private double sourceLongitude;
+    protected double sourceLongitude;
 
-    private double sourceLatitude;
+    protected double sourceLatitude;
 
-    private String sourceAddress;
+    protected String sourceAddress;
 
-    private double destinationLongitude;
+    protected double destinationLongitude;
 
-    private double destinationLatitude;
+    protected double destinationLatitude;
 
-    private String destinationAddress;
+    protected String destinationAddress;
 
-    private int driverID;
+    protected int driverID;
 
 
     public String getKey() {

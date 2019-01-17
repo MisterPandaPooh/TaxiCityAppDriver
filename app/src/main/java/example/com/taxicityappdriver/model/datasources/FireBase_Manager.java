@@ -27,6 +27,7 @@ public class FireBase_Manager implements BackEnd<String> {
     private static DatabaseReference refDriver = db.getReference("Drivers");
     private final String TAG = "firebaseManager";
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private static Driver currentDriver;
 
 
     public void addTrip(final Trip trip, final ActionCallBack<String> action) {
@@ -355,9 +356,10 @@ public class FireBase_Manager implements BackEnd<String> {
     }
 
     @Override
-    public Object getCurrentUser() {
-        return mAuth.getCurrentUser();
+    public Driver getCurrentDriver() {
+        return null;
     }
+
 
     @Override
     public void deleteCurrentUser() {

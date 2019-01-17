@@ -3,23 +3,26 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/item_trip_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:descendantFocusability="blocksDescendants">
 
     <TextView
         style="@style/labelTripItem"
+        android:id="@+id/trip_title_id"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="20dp"
         android:background="@color/colorTaxiYellow"
-        android:text="Trip Destination  :"
-        android:textSize="14sp"
-        android:textAlignment="center" />
+        android:text="About this trip"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:gravity="center_vertical"/>
 
     <TextView
+        android:id="@+id/trip_destination_title_view"
         style="@style/inputStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-
         android:layout_margin="5dp"
         android:layout_weight="3"
         android:drawableLeft="@drawable/ic_target_24dp"
@@ -29,14 +32,7 @@
         android:text="1 Mail de la grosse borne 95400 villiers le bel"
         android:textSize="12sp" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
 
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        android:background="@color/colorTaxiYellow" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -60,12 +56,14 @@
                 android:src="@drawable/ic_taxihdpi" />
 
             <TextView
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" Distance from you"
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/distance_from_you_title_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" 1 km"
@@ -77,7 +75,6 @@
         <View
             android:layout_width="0.6dp"
             android:layout_height="fill_parent"
-
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="2dp"
@@ -107,11 +104,11 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/trip_distance_title_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" 5.4 km"
                 android:textSize="12sp"
-
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -149,6 +146,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/datetime_trip_title_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" 21/08/2019 19:30"

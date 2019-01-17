@@ -1,5 +1,6 @@
 package example.com.taxicityappdriver.controller.activities;
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import example.com.taxicityappdriver.R;
+import example.com.taxicityappdriver.controller.fragments.WaitingTripsFragment;
+import example.com.taxicityappdriver.model.backend.BackEnd;
+import example.com.taxicityappdriver.model.backend.BackEndFactory;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -18,11 +22,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private static BackEnd db = BackEndFactory.getInstance();
+    private WaitingTripsFragment waitingTripsFragmen;
+
+    private final int FRAGMENT_WAITING_TRIPS = 0;
+    private final int FRAGMENT_HISTORY_TRIPS = 1;
+    private final int FRAGMENT_SETTINGS = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkAuthentication();
 
         // 6 - Configure all views
 
@@ -54,8 +66,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.activity_main_drawer_last_trips:
                 break;
             case R.id.activity_main_drawer_waiting_trips:
+                showFragment(FRAGMENT_WAITING_TRIPS);
                 break;
             case R.id.activity_main_drawer_settings:
+                break;
+            case R.id.activity_main_drawer_log_out:
+                logOut();
                 break;
             default:
                 break;
@@ -65,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return true;
     }
+
 
     // ---------------------
     // CONFIGURATION
@@ -97,29 +114,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // 5 - Show fragment according an Identifier
 
     private void showFragment(int fragmentIdentifier) {
-        /*switch (fragmentIdentifier){
-            case FRAGMENT_NEWS :
-                this.showNewsFragment();
+        switch (fragmentIdentifier) {
+            case FRAGMENT_WAITING_TRIPS:
+                //this.showTripItem();
+                this.showWaitingTrip();
                 break;
-            case FRAGMENT_PROFILE:
-                this.showProfileFragment();
+            case FRAGMENT_HISTORY_TRIPS:
+                //this.showProfileFragment();
                 break;
-            case FRAGMENT_PARAMS:
-                this.showParamsFragment();
+            case FRAGMENT_SETTINGS:
+                //this.showParamsFragment();
                 break;
             default:
                 break;
-        }*/
+        }
     }
 
     // ---
 
     // 4 - Create each fragment page and show it
 
-    /*private void showNewsFragment(){
-        if (this.fragmentNews == null) this.fragmentNews = NewsFragment.newInstance();
-        this.startTransactionFragment(this.fragmentNews);
-    }*/
+    private void showWaitingTrip() {
+        if (this.waitingTripsFragmen == null) this.waitingTripsFragmen = new WaitingTripsFragment();
+        this.startTransactionFragment(this.waitingTripsFragmen);
+    }
 
     // ---
 
@@ -136,11 +154,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment visibleFragment = getSupportFragmentManager().findFragmentById(R.id.activity_main_frame_layout);
         if (visibleFragment == null) {
             // 1.1 - Show News Fragment
-            // this.showFragment(FRAGMENT_NEWS);
+            this.showFragment(FRAGMENT_WAITING_TRIPS);
             // 1.2 - Mark as selected the menu item corresponding to NewsFragment
             this.navigationView.getMenu().getItem(0).setChecked(true);
         }
     }
 
+
+    private void checkAuthentication() {
+        if (!db.isSigned()) {
+            Intent intent = new Intent(this, AuthActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); //reset backstack
+            startActivity(intent);
+            finish();
+        }
+    }
+
+    private void logOut() {
+        db.signOut();
+        checkAuthentication();
+    }
 
 }

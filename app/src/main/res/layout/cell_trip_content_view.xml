@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background_cell"
+    android:descendantFocusability="blocksDescendants"
+    android:visibility="gone">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,20 +21,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                android:layout_marginLeft="2dp"
                 android:orientation="vertical"
-                android:padding="0dp"
-                android:layout_marginStart="2dp">
+                android:padding="0dp">
 
+                <TextView
+                    style="@style/labelTripItem"
+                    android:layout_width="fill_parent"
+                    android:layout_height="30dp"
+                    android:background="@color/colorTaxiYellow"
+                    android:text="About this trip"
+                    android:textAlignment="center"
+                    android:textAllCaps="true"
+                    android:gravity="center_vertical"/>
 
                 <ImageView
                     android:id="@+id/header_img"
                     android:layout_width="fill_parent"
                     android:layout_height="80dp"
                     android:adjustViewBounds="true"
+                    android:contentDescription="image Header"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/bg_2"
-                    android:contentDescription="TODO" />
+                    android:src="@drawable/bg_2" />
 
 
                 <View
@@ -48,16 +58,16 @@
                     android:textAlignment="center" />
 
                 <TextView
+                    android:id="@+id/source_address"
                     style="@style/inputStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:layout_marginStart="5dp"
                     android:layout_marginLeft="5dp"
-
                     android:drawablePadding="5dp"
                     android:text="1 Mail de la grosse borne 95400 villiers le bel"
-                    android:textSize="13sp"
-                    android:layout_marginStart="5dp" />
+                    android:textSize="13sp" />
 
 
                 <TextView
@@ -69,14 +79,13 @@
                     android:textAlignment="center" />
 
                 <TextView
+                    android:id="@+id/trip_destination"
                     style="@style/inputStyle"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-
                     android:drawablePadding="5dp"
                     android:text="1 destination street to be a poto"
-
                     android:textSize="13sp" />
 
 
@@ -98,8 +107,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_margin="3dp"
-                            android:src="@drawable/ic_taxihdpi"
-                            android:contentDescription="TODO" />
+                            android:contentDescription="TODO"
+                            android:src="@drawable/ic_taxihdpi" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -108,6 +117,7 @@
                             android:textSize="9sp" />
 
                         <TextView
+                            android:id="@+id/distance_from_you"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" 1 km"
@@ -138,22 +148,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_margin="3dp"
-                            android:src="@drawable/ic_triphdpi"
-                            android:contentDescription="TODO" />
+                            android:contentDescription="taxi_ic"
+                            android:src="@drawable/ic_triphdpi" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" Trip distance"
-
                             android:textSize="9sp" />
 
                         <TextView
+                            android:id="@+id/trip_distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" 5.4 km"
                             android:textSize="12sp"
-
                             android:textStyle="bold" />
 
                     </LinearLayout>
@@ -162,7 +171,6 @@
                     <View
                         android:layout_width="0.6dp"
                         android:layout_height="fill_parent"
-
                         android:layout_gravity="center_horizontal"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="2dp"
@@ -191,6 +199,7 @@
                             android:textSize="9sp" />
 
                         <TextView
+                            android:id="@+id/datetime_trip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" 21/08/2019 19:30"
@@ -208,6 +217,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:background="@drawable/img_item_trip"
+                    android:id="@+id/customer_btn"
                     android:padding="1dp">
 
                     <ImageView
@@ -259,6 +269,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/sms_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/holo_blue_dark"
@@ -267,6 +278,7 @@
                 android:text="Sms" />
 
             <Button
+                android:id="@+id/call_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/colorTaxiYellow"
@@ -276,6 +288,7 @@
 
 
             <Button
+                android:id="@+id/mail_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@android:color/holo_red_light"
@@ -288,15 +301,14 @@
 
 
         <Button
+            android:id="@+id/request_trip_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:backgroundTint="@color/colorPrimary"
             android:text="Request trip !"
             android:textColor="#fff"
-
             android:textStyle="bold"
-
             />
     </LinearLayout>
 </ScrollView>
