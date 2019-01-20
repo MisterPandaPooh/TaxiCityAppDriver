@@ -10,24 +10,36 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import example.com.taxicityappdriver.entities.Driver;
 import example.com.taxicityappdriver.entities.Trip;
 import example.com.taxicityappdriver.model.backend.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
+import example.com.taxicityappdriver.model.backend.NotifyDataChange;
 
 public class FireBase_Manager implements BackEnd<String> {
     private static FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static DatabaseReference refTrips = db.getReference("Trips");
     private static DatabaseReference refDriver = db.getReference("Drivers");
     private final String TAG = "firebaseManager";
-    private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static Driver currentDriver;
+    private static Trip currentTrip;
+    private static ChildEventListener tripRefChildEventListener;
+    private static ChildEventListener driverRefChildEventListener;
+
+
+    private static ArrayList<Driver> drivers = new ArrayList<>();
+    private static ArrayList<Trip> Trips = new ArrayList<>();
 
 
     public void addTrip(final Trip trip, final ActionCallBack<String> action) {
@@ -383,6 +395,79 @@ public class FireBase_Manager implements BackEnd<String> {
 
     private static String DecodeString(String string) {
         return string.replace(",", ".");
+    }
+
+
+    public  void notifyToTripList(final NotifyDataChange<List<Trip>> notifyDataChange) {
+        if (notifyDataChange != null) {
+
+            if (tripRefChildEventListener != null) {
+                notifyDataChange.onFailure(new Exception("first unNotify student list"));
+                return;
+            }
+            Trips.clear();
+
+            tripRefChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    String key = dataSnapshot.getKey();
+                    trip.setKey(key);
+                    Trips.add(trip);
+
+
+                    notifyDataChange.OnDataChanged(Trips);
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    String key = dataSnapshot.getKey();
+                    trip.setKey(key);
+
+
+                    for (int i = 0; i < Trips.size(); i++) {
+                        if (Trips.get(i).getKey().equals(key)) {
+                            Trips.set(i, trip);
+                            break;
+                        }
+                    }
+                    notifyDataChange.OnDataChanged(Trips);
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    Trip trip = dataSnapshot.getValue(Trip.class);
+                    String key = dataSnapshot.getKey();
+                    trip.setKey(key);
+
+                    for (int i = 0; i < Trips.size(); i++) {
+                        if (Trips.get(i).getKey() == key) {
+                            Trips.remove(i);
+                            break;
+                        }
+                    }
+                    notifyDataChange.OnDataChanged(Trips);
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    notifyDataChange.onFailure(databaseError.toException());
+                }
+            };
+            refTrips.addChildEventListener(tripRefChildEventListener);
+        }
+    }
+
+    public void stopNotifyToTripList() {
+        if (tripRefChildEventListener != null) {
+            refTrips.removeEventListener(tripRefChildEventListener);
+            tripRefChildEventListener = null;
+        }
     }
 
 }

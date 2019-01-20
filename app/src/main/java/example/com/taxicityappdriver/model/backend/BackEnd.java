@@ -1,5 +1,7 @@
 package example.com.taxicityappdriver.model.backend;
 
+import java.util.List;
+
 import example.com.taxicityappdriver.entities.Driver;
 import example.com.taxicityappdriver.entities.Trip;
 
@@ -33,5 +35,9 @@ public interface BackEnd<T> {
     boolean isSigned();
     Driver getCurrentDriver();
     void deleteCurrentUser();
+
+    void notifyToTripList(final NotifyDataChange<List<Trip>> notifyDataChange);
+    void stopNotifyToTripList();
+
 
 }

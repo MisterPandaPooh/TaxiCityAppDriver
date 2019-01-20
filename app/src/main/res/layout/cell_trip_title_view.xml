@@ -11,7 +11,7 @@
         android:id="@+id/trip_title_id"
         android:layout_width="fill_parent"
         android:layout_height="20dp"
-        android:background="@color/colorTaxiYellow"
+        android:background="@drawable/title_trip_id_item"
         android:text="About this trip"
         android:textAlignment="center"
         android:textAllCaps="true"

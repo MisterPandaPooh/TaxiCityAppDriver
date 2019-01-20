@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_cell"
+    android:background="@drawable/item_trip_background"
     android:descendantFocusability="blocksDescendants"
     android:visibility="gone">
 
@@ -28,7 +28,7 @@
                     style="@style/labelTripItem"
                     android:layout_width="fill_parent"
                     android:layout_height="30dp"
-                    android:background="@color/colorTaxiYellow"
+                    android:background="@drawable/title_trip_id_item"
                     android:text="About this trip"
                     android:textAlignment="center"
                     android:textAllCaps="true"
@@ -311,4 +311,4 @@
             android:textStyle="bold"
             />
     </LinearLayout>
-</ScrollView>
+</FrameLayout>

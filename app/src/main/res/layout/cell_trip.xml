@@ -6,6 +6,7 @@
     folding-cell:additionalFlipsCount="2"
     folding-cell:animationDuration="1300"
     folding-cell:backSideColor="@color/colorTaxiBlack"
+    android:layout_margin="5dp"
     folding-cell:cameraHeight="30">
 
     <!-- CONTENT (UNFOLDED) LAYOUT (MUST BE AT LEAST 2x times BIGGER than content layout bellow)-->

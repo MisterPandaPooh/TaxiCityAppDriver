@@ -23,6 +23,7 @@ public class FoldingCellListAdapter extends ArrayAdapter<Trip> {
 
     private HashSet<Integer> unfoldedIndexes = new HashSet<>();
     private Driver driver;
+    private final String TAG = "FoldingCellListAdapter";
 
     public FoldingCellListAdapter(Context context, List<Trip> objects, Driver driver) {
         super(context, 0, objects);
@@ -34,6 +35,7 @@ public class FoldingCellListAdapter extends ArrayAdapter<Trip> {
     public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         // get item for selected view
         Trip item = getItem(position);
+        Log.i(TAG, item.getDestinationAddress());
         // if cell is exists - reuse it, if not - create the new one from resource
         FoldingCell cell = (FoldingCell) convertView;
         TripItemViewAdapter.context = getContext();

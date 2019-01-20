@@ -10,6 +10,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.Button;
@@ -18,37 +20,34 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.CommonDataKinds.Phone;
-import android.provider.ContactsContract.CommonDataKinds.StructuredName;
-import android.provider.ContactsContract.Contacts.Data;
-import android.provider.ContactsContract.RawContacts;
-
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
+import example.com.taxicityappdriver.R;
 import example.com.taxicityappdriver.entities.Driver;
 import example.com.taxicityappdriver.entities.Trip;
 
-public class TripItemViewAdapter {
+public class WaitingTripViewHolder extends RecyclerView.ViewHolder  {
 
 
     public static Context context;
     public static Driver driver;
     private static final SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yyyy - HH:mm");
+
+
+
     private Trip trip;
     private boolean isInit;
     private boolean wasRequestByYou;
     private boolean contactAdded;
     private final String TAG = "TripItemViewAdapter";
 
-    public TripItemViewAdapter(Trip tr) {
-        trip = tr;
+    public WaitingTripViewHolder(@NonNull View itemView, Context c) {
+        super(itemView);
         isInit = false;
         wasRequestByYou = false;
         contactAdded = false;
+        context = c;
     }
 
 
@@ -81,7 +80,32 @@ public class TripItemViewAdapter {
 
     private View.OnClickListener foldListener;
 
-    public void initItem() {
+    private void bind(){
+        View cell = itemView;
+        this.startingHourTitleView = cell.findViewById(R.id.datetime_trip_title_view);
+        this.destinationAddressTitleView = cell.findViewById(R.id.trip_destination_title_view);
+        this.distanceFromYouTitleView = cell.findViewById(R.id.distance_from_you_title_view);
+        this.tripDistanceTitleView = cell.findViewById(R.id.trip_distance_title_view);
+        this.startingHour = cell.findViewById(R.id.datetime_trip);
+        this.customerButton = cell.findViewById(R.id.customer_btn);
+        this.sourceAddress = cell.findViewById(R.id.source_address);
+        this.destinationAddress = cell.findViewById(R.id.trip_destination);
+        this.distanceFromYou = cell.findViewById(R.id.distance_from_you);
+        this.tripDistance = cell.findViewById(R.id.trip_distance);
+        this.requestTripButton = cell.findViewById(R.id.request_trip_btn);
+        this.smsButton = cell.findViewById(R.id.sms_btn);
+        this.callButton = cell.findViewById(R.id.call_btn);
+        this.emailButton = cell.findViewById(R.id.mail_btn);
+        this.imgHeader = cell.findViewById(R.id.header_img);
+        this.tripIdTitleView = cell.findViewById(R.id.trip_title_id);
+        cell.setTag(itemView);
+
+    }
+
+
+
+    public void initItems() {
+        bind();
         if (trip == null || isInit)
             return;
         if (startingHour == null || customerButton == null || sourceAddress == null || destinationAddress == null || distanceFromYou == null
@@ -98,27 +122,28 @@ public class TripItemViewAdapter {
         emailButton.setEnabled(false);
 
 
-        initListenner();
+        initListener();
         initContent();
         new CalculDistanceAsyncTask().doInBackground(null);
         isInit = true;
 
     }
 
-    private void initListenner() {
+    private void initListener() {
         customerButton.setOnClickListener(onCustomerClickListner());
         smsButton.setOnClickListener(onSmsClickListner());
         callButton.setOnClickListener(onCallClickListner());
         emailButton.setOnClickListener(onEmailClickListner());
         imgHeader.setOnClickListener(foldListener);
+        itemView.setOnClickListener(foldListener);
         requestTripButton.setOnClickListener(onRequestTripClickListener());
 
     }
 
     private void initContent() {
 
-//        startingHour.setText(simpleDate.format(trip.getStartingHourAsDate()));
- //       startingHourTitleView.setText(simpleDate.format(trip.getStartingHourAsDate()));
+        //  startingHour.setText(simpleDate.format(trip.getStartingHourAsDate()));
+        //  startingHourTitleView.setText(simpleDate.format(trip.getStartingHourAsDate()));
 
         sourceAddress.setText(trip.getSourceAddress());
 
@@ -132,6 +157,8 @@ public class TripItemViewAdapter {
         tripDistanceTitleView.setText("TODO");
 
     }
+
+
 
 
     private View.OnClickListener onCustomerClickListner() {
@@ -235,7 +262,7 @@ public class TripItemViewAdapter {
         tr.setSourceAddress("50 Rue du 8 mai, 92400, Sarcelles");
         tr.setSourceLatitude(33);
         tr.setSourceLongitude(32);
-    //    tr.setStartingHourAsDate(new Date());
+        //    tr.setStartingHourAsDate(new Date());
         tr.setStatusAsEnum(Trip.TripStatus.AVAILABLE);
 
 
@@ -266,7 +293,7 @@ public class TripItemViewAdapter {
         tr2.setSourceAddress("50 Rue Satre, 92400, Jerusalem");
         tr2.setSourceLatitude(33);
         tr2.setSourceLongitude(32);
-    //    tr2.setStartingHourAsDate(new Date());
+        //    tr2.setStartingHourAsDate(new Date());
         tr2.setStatusAsEnum(Trip.TripStatus.AVAILABLE);
 
         Trip tr3 = new Trip();
@@ -323,6 +350,7 @@ public class TripItemViewAdapter {
         this.foldListener = foldListener;
     }
 
+
     private void AddContact() {
         if (contactAdded) //Prevent double contact
             return;
@@ -347,25 +375,25 @@ public class TripItemViewAdapter {
                         rawContactInsertIndex)
                 .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
                 .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, trip.getCustomerPhone())
-                .withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
-                .withValue(Phone.TYPE, "1").build());
+                .withValue(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, "1").build());
 
         //Display name/Contact name
         ops.add(ContentProviderOperation
                 .newInsert(ContactsContract.Data.CONTENT_URI)
-                .withValueBackReference(Data.RAW_CONTACT_ID,
+                .withValueBackReference(ContactsContract.Contacts.Data.RAW_CONTACT_ID,
                         rawContactInsertIndex)
-                .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
-                .withValue(StructuredName.DISPLAY_NAME, trip.getCustomerName())
+                .withValue(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, trip.getCustomerName())
                 .build());
         //Email details
         ops.add(ContentProviderOperation
                 .newInsert(ContactsContract.Data.CONTENT_URI)
                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID,
                         rawContactInsertIndex)
-                .withValue(Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
                 .withValue(ContactsContract.CommonDataKinds.Email.DATA, trip.getCustomerEmail())
-                .withValue(Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.Contacts.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
                 .withValue(ContactsContract.CommonDataKinds.Email.TYPE, "1").build());
 
         try {
@@ -411,4 +439,15 @@ public class TripItemViewAdapter {
             return null;
         }
     }
+
+
+    public Trip getTrip() {
+        return trip;
+    }
+
+    public void setTrip(Trip trip) {
+        this.trip = trip;
+    }
+
+
 }

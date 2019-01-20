@@ -14,35 +14,34 @@ public class Trip {
     public enum TripStatus {AVAILABLE, IN_PROGRESS, FINISHED}
 
     @Exclude
-    protected String key;
+    private String key;
 
-    protected Date startingHour; //Not firebase
+    private String startingHour; //Not firebase
 
-    protected Date endingHour; //Not Firebase
+    private String endingHour; //Not Firebase
 
-    protected String customerName;
+    private String customerName;
 
-    protected String customerPhone;
+    private String customerPhone;
 
-    protected String customerEmail;
+    private String customerEmail;
 
 
-    protected TripStatus status;
+    private TripStatus status;
 
-    protected double sourceLongitude;
+    private double sourceLongitude;
 
-    protected double sourceLatitude;
+    private double sourceLatitude;
 
-    protected String sourceAddress;
+    private String sourceAddress;
 
-    protected double destinationLongitude;
+    private double destinationLongitude;
 
-    protected double destinationLatitude;
+    private double destinationLatitude;
 
-    protected String destinationAddress;
+    private String destinationAddress;
 
-    protected int driverID;
-
+    private int driverID;
 
     public String getKey() {
         return key;
@@ -134,56 +133,33 @@ public class Trip {
     }
 
     public String getStartingHour() {
-        if (startingHour == null)
-            return null;
-        return Helpers.ISO_8601_FORMAT.format(startingHour);
-    }
-
-    public void setStartingHour(String startingHour) {
-
-        if (startingHour == null)
-            this.startingHour = null;
-        else
-            this.startingHour = new Date(startingHour);
-    }
-
-    @Exclude
-    public Date getStartingHourAsDate() {
         return startingHour;
     }
 
-    @Exclude
-    public void setStartingHourAsDate(Date startingHour) {
+    public void setStartingHour(String startingHour) {
         this.startingHour = startingHour;
     }
 
-
-    // DATABASE ADAPTER
-    @Exclude
-    public Date getEndingHourAsDate() {
+    public String getEndingHour() {
         return endingHour;
     }
 
-    @Exclude
-    public void setEndingHourAsDate(Date endingHour) {
-
+    public void setEndingHour(String endingHour) {
         this.endingHour = endingHour;
     }
 
-    public String getEndingHour() {
 
-        if (endingHour == null)
-            return null;
-        return Helpers.ISO_8601_FORMAT.format(endingHour);
+    @Exclude
+    public Date getStartingHourAsDate() {
+        return new Date(startingHour);
+    }
+    @Exclude
+    public Date getEndingHourAsDate() {
+        return new Date(endingHour);
     }
 
-    public void setEndingHour(String endingHour) {
 
-        if (endingHour == null)
-            this.endingHour = null;
-        else
-            this.endingHour = new Date(endingHour);
-    }
+
 
     @Exclude
     public TripStatus getStatusAsEnum() {
@@ -214,3 +190,4 @@ public class Trip {
 
 
 }
+
