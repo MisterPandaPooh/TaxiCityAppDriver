@@ -1,5 +1,6 @@
 package example.com.taxicityappdriver.model.backend;
 
+import java.util.Date;
 import java.util.List;
 
 import example.com.taxicityappdriver.entities.Driver;
@@ -38,6 +39,12 @@ public interface BackEnd<T> {
 
     void notifyToTripListAll(final NotifyDataChange<List<Trip>> notifyDataChange);
     void notifyToTripListWaiting(final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListBeforeDate(final Date date, final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListByAmounth(final double min, final double max, final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListWaitingByDistance(final int distanceInKm, final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListWaitingByCity(final String destinationCity, final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListByDriver(final String driverEmail, final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListFinished(final NotifyDataChange<List<Trip>> notifyDataChange);
     void stopNotifyToTripList();
 
 

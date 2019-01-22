@@ -21,18 +21,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".controller.services.ClosingService"
+            android:stopWithTask="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAc-ewv7qe8e1kQCKL1YcRNXp5Uydr0pb8" />
 
-        <activity android:name=".controller.activities.MainActivity"
+        <activity
+            android:name=".controller.activities.MainActivity"
             android:windowSoftInputMode="stateHidden|adjustPan">
 
 
         </activity>
 
 
-        <activity android:name=".controller.activities.AuthActivity"
+        <activity
+            android:name=".controller.activities.AuthActivity"
             android:windowSoftInputMode="stateHidden|adjustPan">
 
             <intent-filter>

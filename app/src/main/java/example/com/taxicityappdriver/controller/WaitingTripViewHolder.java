@@ -207,6 +207,19 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
             smsButton.setEnabled(false);
             emailButton.setEnabled(false);
         }
+        else
+        {
+            //Unfold the current trip cell
+            final FoldingCell cell = (FoldingCell) itemView;
+            cell.post(new Runnable() {
+                @Override
+                public void run() {
+                    cell.toggle(true);
+
+                }
+            });
+
+        }
 
         new CalculateDistanceAsyncTask().doInBackground(null); //Calculate Distance AsyncTask
 
@@ -306,6 +319,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                     //Change trip info
                     trip.setStatusAsEnum(Trip.TripStatus.IN_PROGRESS);
                     trip.setDriverEmail(driver.getEmail());
+                    Trip tr2 = trip;
 
                     //Update the trip
                     db.updateTrip(trip, new ActionCallBack() {

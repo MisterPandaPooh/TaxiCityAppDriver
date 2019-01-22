@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import example.com.taxicityappdriver.controller.WaitingTripAdapter;
+import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
 import example.com.taxicityappdriver.model.helpers.Helpers;
 import example.com.taxicityappdriver.model.helpers.LocationHelper;
 import example.com.taxicityappdriver.entities.Driver;
@@ -110,13 +112,13 @@ public class FireBase_Manager implements BackEnd<String> {
     }
 
 
-    public void updateTrip(final Trip toUpdate, final ActionCallBack<String> action) {
+    /*public void updateTrip(final Trip toUpdate, final ActionCallBack<String> action) {
         final String key = toUpdate.getKey();
 
 
         Log.e(TAG, "Update Started");
-        Log.i(TAG, "updateTrip: " + key);
-        Log.i(TAG, "updateTrip: " + toUpdate.getDestinationAddress());
+        Log.i(TAG, "updateTrip - key :" + key);
+        Log.i(TAG, "updateTrip: - Destination :" + toUpdate.getDestinationAddress());
         removeTrip(key, new ActionCallBack<String>() {
             @Override
             public void onSuccess(String obj) {
@@ -133,7 +135,32 @@ public class FireBase_Manager implements BackEnd<String> {
                 action.onProgress(status, percent);
             }
         });
+    }*/
+
+    public void updateTrip(final Trip toUpdate, final ActionCallBack<String> action) {
+        Log.e(TAG, "Update Started");
+        Log.i(TAG, "updateTrip - key :" + toUpdate.getKey());
+        Log.i(TAG, "updateTrip: - Destination :" + toUpdate.getDestinationAddress());
+
+        final String finalIdTrip = toUpdate.getKey();
+        refTrips.child(finalIdTrip).setValue(toUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                action.onSuccess(finalIdTrip);
+                action.onProgress("Adding trip in progress...", 100);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                action.onFailure(e);
+                action.onProgress("Failed to add the trips...", 100);
+            }
+        });
+
     }
+
+
+
 
 
     @Override
@@ -579,9 +606,22 @@ public class FireBase_Manager implements BackEnd<String> {
                     String key = dataSnapshot.getKey();
                     trip.setKey(key);
 
+                    boolean contains = false;
                     if (condition == null || condition.isTrue(trip)) {
 
-                        Trips.add(trip);
+
+
+                        for (int i = 0; i < Trips.size(); i++) {
+                            if (Trips.get(i).getKey().equals(key)) {
+                                Trips.set(i, trip);
+                                contains = true;
+                                break;
+                            }
+                        }
+
+                        if(!contains)
+                            Trips.add(trip);
+
                         notifyDataChange.OnDataChanged(Trips);
                     }
                 }
@@ -638,8 +678,11 @@ public class FireBase_Manager implements BackEnd<String> {
 
 
     public void notifyToTripListAll(final NotifyDataChange<List<Trip>> notifyDataChange) {
+        if (tripRefChildEventListener != null)
+            stopNotifyToTripList();
         notifyToTripList(notifyDataChange, null);
     }
+
 
     public void notifyToTripListWaiting(final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
@@ -647,7 +690,13 @@ public class FireBase_Manager implements BackEnd<String> {
         notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
-                return obj.getStatusAsEnum() == Trip.TripStatus.AVAILABLE;
+
+                //Prevent Delete Cell on refresh
+                boolean flag = false;
+                if(WaitingTripAdapter.isBusyDriver() && obj.getKey().equals(WaitingTripViewHolder.getBusyKey()) &&  obj.getDriverEmail().equals(getCurrentDriver().getEmail()) )
+                    flag = true;
+
+                return flag || obj.getStatusAsEnum() == Trip.TripStatus.AVAILABLE ;
             }
         });
     }

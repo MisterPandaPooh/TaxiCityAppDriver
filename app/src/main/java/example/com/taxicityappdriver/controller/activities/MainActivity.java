@@ -15,13 +15,15 @@ import android.widget.Toast;
 
 import example.com.taxicityappdriver.R;
 import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
-import example.com.taxicityappdriver.controller.fragments.WaitingTripsFragment;
+import example.com.taxicityappdriver.controller.WaitingTripsFragment;
+import example.com.taxicityappdriver.controller.services.ClosingService;
 import example.com.taxicityappdriver.entities.Trip;
 import example.com.taxicityappdriver.model.backend.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
 
 import static example.com.taxicityappdriver.controller.WaitingTripAdapter.isBusyDriver;
+
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureDrawerLayout();
 
         this.configureNavigationView();
+
+        startService(new Intent(getBaseContext(), ClosingService.class));
     }
 
     @Override
@@ -152,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.startTransactionFragment(this.waitingTripsFragment);
     }
 
+
     // ---
 
     // 3 - Generic method that will replace and show a fragment inside the MainActivity Frame Layout
@@ -189,52 +194,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    protected void onStop() {
-
-        Log.i(TAG, "onDestroy: ");
-        //Prevent quit
-        if (isBusyDriver()) {
-            Log.i(TAG, "DRIVER BUSY " + WaitingTripViewHolder.getBusyKey());
-            db.getTrip(WaitingTripViewHolder.getBusyKey(), new ActionCallBack<Trip>() {
-                @Override
-                public void onSuccess(Trip obj) {
-                    obj.setDriverEmail(null);
-                    obj.setStatusAsEnum(Trip.TripStatus.AVAILABLE);
-                    Log.i(TAG, "SUCESS DESTROY UPDATE " + obj.getKey());
-                    db.updateTrip(obj, new ActionCallBack() {
-                        @Override
-                        public void onSuccess(Object obj) {
-                            Log.i(TAG, "onSuccess: REUPDATE TRIP");
-
-                        }
-
-                        @Override
-                        public void onFailure(Exception exception) {
-                            Log.i(TAG, "onFailure: " + exception.getMessage());
-                        }
-
-                        @Override
-                        public void onProgress(String status, double percent) {
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(Exception exception) {
-                    Log.i(TAG, "onFailure: " + exception.getMessage());
-
-
-                }
-
-                @Override
-                public void onProgress(String status, double percent) {
-
-                }
-            });
-        }
-
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
 
     }
 

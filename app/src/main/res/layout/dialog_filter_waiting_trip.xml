@@ -16,12 +16,40 @@
             android:layout_width="130dp"
             style="@style/labelStyleForm"
             android:layout_height="wrap_content"
-            android:text="Filtering By City :"/>
+            android:text="Filtering By City :"
+            />
         <android.widget.Switch
             android:layout_width="wrap_content"
             android:textAlignment="center"
             android:layout_height="wrap_content"
-            android:switchMinWidth="100dp"/>
+            android:switchMinWidth="100dp"
+            android:id="@+id/filter_by_city_switch"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:id="@+id/filter_by_city_linear_layout"
+        >
+        <TextView
+            android:layout_width="130dp"
+            style="@style/labelStyleForm"
+            android:layout_height="wrap_content"
+            android:text="City Name:"
+            />
+        <EditText
+            android:layout_margin="5dp"
+
+            style="@style/inputStyle"
+            android:layout_width="wrap_content"
+            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:minWidth="100dp"
+            android:id="@+id/filter_by_city_edit_text"
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -38,10 +66,12 @@
             android:layout_width="wrap_content"
             android:textAlignment="center"
             android:layout_height="wrap_content"
-            android:switchMinWidth="100dp"/>
+            android:switchMinWidth="100dp"
+            android:id="@+id/filter_by_distance_switch"/>
     </LinearLayout>
 
     <com.ramotion.fluidslider.FluidSlider
+        android:id="@+id/distance_fluid_slider"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="0dp"

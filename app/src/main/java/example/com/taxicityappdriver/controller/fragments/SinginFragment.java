@@ -1,16 +1,13 @@
 package example.com.taxicityappdriver.controller.fragments;
 
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -22,31 +19,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import org.w3c.dom.Text;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.controller.activities.AuthActivity;
 import example.com.taxicityappdriver.controller.activities.MainActivity;
-import example.com.taxicityappdriver.entities.test;
 import example.com.taxicityappdriver.model.backend.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
 import example.com.taxicityappdriver.model.helpers.Helpers;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.

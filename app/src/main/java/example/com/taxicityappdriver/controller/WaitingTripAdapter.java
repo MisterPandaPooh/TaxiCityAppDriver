@@ -1,16 +1,16 @@
 package example.com.taxicityappdriver.controller;
 
 import android.content.Context;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.ramotion.foldingcell.FoldingCell;
 
-import java.util.HashSet;
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
@@ -58,8 +58,6 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
     public void onBindViewHolder(@NonNull final WaitingTripViewHolder viewHolder, final int position) {
         viewHolder.setTrip(items.get(position));
 
-
-
         //Set the Fold Listener (Maybe change position)
         final FoldingCell finalCell = (FoldingCell) viewHolder.itemView;
         viewHolder.setFoldListener(new View.OnClickListener() {
@@ -67,11 +65,6 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
             public void onClick(View v) {
                 if (!WaitingTripAdapter.isBusyDriver()) {
                     finalCell.toggle(false);
-
-                } else {
-                    if (WaitingTripViewHolder.getBusyKey().equals(items.get(position).getKey()))
-                        finalCell.toggle(true);
-
                 }
 
             }
