@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import example.com.taxicityappdriver.R;
+import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
 import example.com.taxicityappdriver.controller.fragments.SinginFragment;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
@@ -28,6 +29,8 @@ public class AuthActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth);
 
         requestAllPermissions();
+
+
 
         db.signOut();
         if (db.isSigned())

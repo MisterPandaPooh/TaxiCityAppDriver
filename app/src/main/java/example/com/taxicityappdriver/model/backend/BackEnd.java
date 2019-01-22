@@ -36,7 +36,8 @@ public interface BackEnd<T> {
     Driver getCurrentDriver();
     void deleteCurrentUser();
 
-    void notifyToTripList(final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListAll(final NotifyDataChange<List<Trip>> notifyDataChange);
+    void notifyToTripListWaiting(final NotifyDataChange<List<Trip>> notifyDataChange);
     void stopNotifyToTripList();
 
 

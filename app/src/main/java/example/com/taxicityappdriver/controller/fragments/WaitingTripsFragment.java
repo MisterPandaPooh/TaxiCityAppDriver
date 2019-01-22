@@ -1,53 +1,45 @@
 package example.com.taxicityappdriver.controller.fragments;
 
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.ramotion.foldingcell.FoldingCell;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.controller.FoldingCellListAdapter;
-import example.com.taxicityappdriver.controller.TripItemViewAdapter;
 import example.com.taxicityappdriver.controller.WaitingTripAdapter;
 import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
-import example.com.taxicityappdriver.entities.Driver;
 import example.com.taxicityappdriver.entities.Trip;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
 import example.com.taxicityappdriver.model.backend.NotifyDataChange;
-
-import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class WaitingTripsFragment extends Fragment {
 
-    private RecyclerView recyclerView;
-    private List<Trip> items;
     public final static BackEnd db = BackEndFactory.getInstance();
-    private WaitingTripAdapter adapter;
-    private static Driver driver;
-    int i = 0;
     private final String TAG = "WaitingTripsFragment";
+
+    private List<Trip> items; //Notified list of trip items.
+
+    private RecyclerView recyclerView; //RecyclerView instance.
+    private SwipeRefreshLayout swipeRefreshLayout;//SwipeRefreshLayout instance.
+    private FloatingActionButton fab; //FloatingActionButton instance to activate filters.
 
 
     public WaitingTripsFragment() {
@@ -55,95 +47,79 @@ public class WaitingTripsFragment extends Fragment {
     }
 
 
-   /* @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_waiting_trips, container, false);
-
-        // get our list view
-        theListView = view.findViewById(R.id.mainListView);
-
-        final Driver driver = new Driver();
-        driver.setFirstName("Jean");
-        driver.setLastName("DelaVeine");
-
-        // prepare elements to display
-
-        adapter = new FoldingCellListAdapter(getContext(),items,driver);
-        db.notifyToTripList(new NotifyDataChange<List<Trip>>() {
-            @Override
-            public void OnDataChanged(List<Trip> obj) {
-                items = obj;
-                if (theListView.getAdapter() == null) {
-                    Log.i(TAG, Integer.toString(items.size()));
-                    theListView.setAdapter(new FoldingCellListAdapter(getActivity(), items, driver));
-                    ((ArrayAdapter)theListView.getAdapter()).notifyDataSetChanged();
-                    setListViewHeight(theListView);
-
-                } else{
-                    Log.i(TAG," ELSE :"+ Integer.toString(items.size()));
-                    ((ArrayAdapter)theListView.getAdapter()).notifyDataSetChanged();
-                    setListViewHeight(theListView);
-                }
-
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-        // create custom adapter that holds elements and their state (we need hold a id's of unfolded elements for reusable elements)
-        //theListView.setAdapter(new FoldingCellListAdapter(getActivity(), TripItemViewAdapter.getTestingList(), driver));
-
-        //adapter = new FoldingCellListAdapter(getActivity(), items, driver);
-
-
-
-
-        // set elements to adapter
-        //theListView.setAdapter(adapter);
-
-        //adapter.notifyDataSetChanged();
-
-        // set on click event listener to list view
-        theListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                // toggle clicked cell state
-                Log.i("michelle", "CLICK : " + i++);
-                ((FoldingCell) view).toggle(false);
-                // register in adapter that state for selected cell is toggled
-                adapter.registerToggle(pos);
-            }
-        });
-        return view;
-    }*/
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        // Bind View Reference
         View view = inflater.inflate(R.layout.fragment_waiting_trips, container, false);
-        recyclerView = view.findViewById(R.id.mainListView);
-        //recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        final Driver driver = new Driver();
-        driver.setFirstName("Jean");
-        driver.setLastName("DelaVeine");
-        WaitingTripAdapter.driver = driver;
-        db.notifyToTripList(new NotifyDataChange<List<Trip>>() {
+        recyclerView = view.findViewById(R.id.mainRecycleView);
+        swipeRefreshLayout = view.findViewById(R.id.fragment_main_swipe_container);
+        fab = view.findViewById(R.id.fab);
+
+        //Refresh Layout Listener
+        final WaitingTripsFragment MyFragment = this;
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //Prevent Busy driver to quit the trip.
+                if (WaitingTripAdapter.isBusyDriver()) {
+                    Toast.makeText(getContext(), "You can't refresh when your have a trip in progress !", Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                } else {
+                    //Reload the fragment
+                    db.stopNotifyToTripList();
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.detach(MyFragment).attach(MyFragment).commit();
+                }
+
+            }
+        });
+
+
+        //Click Floating Button Listener.
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog(); //Showing the filter dialog
+            }
+        });
+
+
+        //Initialisation of the RecyclerView.
+        this.initRecyclerView(view);
+
+        return view;
+
+    }
+
+    /**
+     * Initialisation of the RecyclerView.
+     *
+     * @param v
+     */
+    private void initRecyclerView(final View v) {
+
+        //Init Layout Manager
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true); //Reverse Data
+        linearLayoutManager.setReverseLayout(true); //Reverse Data
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        recyclerView.setHasFixedSize(true);
+
+        //Initialisation Of data
+        db.notifyToTripListAll(new NotifyDataChange<List<Trip>>() {
             @Override
             public void OnDataChanged(List<Trip> obj) {
                 if (recyclerView.getAdapter() == null) {
                     items = obj;
-                    if (WaitingTripViewHolder.driver == null)
-                        WaitingTripViewHolder.driver = WaitingTripAdapter.driver;
-                    recyclerView.setAdapter(new WaitingTripAdapter(items));
+                    WaitingTripAdapter adapter = new WaitingTripAdapter(items);
+                    //adapter.setHasStableIds(true);
+                    recyclerView.setAdapter(adapter);
+
                 } else
                     recyclerView.getAdapter().notifyDataSetChanged();
+
 
             }
 
@@ -153,40 +129,42 @@ public class WaitingTripsFragment extends Fragment {
             }
         });
 
-
-        return view;
-
     }
 
-    // 3 - Configure RecyclerView, Adapter, LayoutManager & glue it together
-    private void configureRecyclerView() {
-        final Driver driver = new Driver();
-        driver.setFirstName("Jean");
-        driver.setLastName("DelaVeine");
-        // 3.1 - Reset list
-        this.items = WaitingTripViewHolder.getTestingList();
-        // 3.2 - Create adapter passing the list of users
-        this.adapter = new WaitingTripAdapter(items);
-        WaitingTripAdapter.driver = driver;
-        // 3.3 - Attach the adapter to the recyclerview to populate items
-        this.recyclerView.setAdapter(this.adapter);
-        // 3.4 - Set layout manager to position the items
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-    }
-
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-
-    }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         db.stopNotifyToTripList();
+        super.onDestroy();
     }
 
+
+    private void showFilterDialog() {
+
+        //Init Dialog
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_filter_waiting_trip, null);
+
+        //Init UI View of the Dialog
+        dialogBuilder.setView(dialogView);
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.setTitle("Filters");
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Apply", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+
+        alertDialog.show();
+    }
 
 }

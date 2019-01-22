@@ -9,7 +9,21 @@ import example.com.taxicityappdriver.model.helpers.Helpers;
 public class Trip {
 
 
+    public String getDriverEmail() {
+        return driverEmail;
+    }
 
+    public void setDriverEmail(String driverEmail) {
+        this.driverEmail = driverEmail;
+    }
+
+    public String getDestinationCity() {
+        return destinationCity;
+    }
+
+    public void setDestinationCity(String destinationCity) {
+        this.destinationCity = destinationCity;
+    }
 
     public enum TripStatus {AVAILABLE, IN_PROGRESS, FINISHED}
 
@@ -41,7 +55,9 @@ public class Trip {
 
     private String destinationAddress;
 
-    private int driverID;
+    private String destinationCity;
+
+    private String driverEmail;
 
     public String getKey() {
         return key;
@@ -116,13 +132,6 @@ public class Trip {
         this.destinationAddress = destinationAddress;
     }
 
-    public int getDriverID() {
-        return driverID;
-    }
-
-    public void setDriverID(int driverID) {
-        this.driverID = driverID;
-    }
 
     public String getSourceAddress() {
         return sourceAddress;
@@ -151,7 +160,7 @@ public class Trip {
 
     @Exclude
     public Date getStartingHourAsDate() {
-        return new Date(startingHour);
+        return new Date(Long.parseLong(startingHour));
     }
     @Exclude
     public Date getEndingHourAsDate() {
@@ -159,7 +168,7 @@ public class Trip {
     }
 
 
-
+    //TODO Rajouter city
 
     @Exclude
     public TripStatus getStatusAsEnum() {

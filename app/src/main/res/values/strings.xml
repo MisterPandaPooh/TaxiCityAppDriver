@@ -35,4 +35,5 @@
     <string name="log_out">Log out</string>
     <string name="id_number">ID Number</string>
     <string name="tz_hint">342532173</string>
+    <string name="in_progress_cell">In progress ...</string>
 </resources>

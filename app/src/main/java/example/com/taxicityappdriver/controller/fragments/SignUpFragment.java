@@ -157,7 +157,7 @@ public class SignUpFragment extends Fragment {
     private Driver formatDriver() {
         Driver driver = new Driver();
         driver.setEmail(emailEditText.getText().toString());
-        driver.setCreatedDateAsDate(new Date());
+        driver.setCreatedDate(Long.toString(System.currentTimeMillis()));
         driver.setFirstName(firstNameEditText.getText().toString());
         driver.setLastName(lastNameEditText.getText().toString());
         driver.setPhoneNumber(phoneEditText.getText().toString());

@@ -14,20 +14,31 @@ import java.util.HashSet;
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.entities.Driver;
 import example.com.taxicityappdriver.entities.Trip;
 
 public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHolder> {
 
-    private List<Trip> items;
-    private HashSet<Integer> unfoldedIndexes = new HashSet<>();
-    public static Driver driver;
-    private final String TAG = "WaitingTripAdapter";
-    public AdapterView.OnItemClickListener onItemClickListener;
 
+    private List<Trip> items;//List of all trip items.
+
+    private final static String TAG = "WaitingTripAdapter";
+
+    /**
+     * Check if the Driver is Busy (The busyKey is not null)
+     *
+     * @return 'true' fi is busy else 'false'
+     */
+
+    public static boolean isBusyDriver() {
+        return WaitingTripViewHolder.getBusyKey() != null;
+    }
+
+    /**
+     * Constructor
+     * @param listTrips List of all trip items.
+     */
     public WaitingTripAdapter(List<Trip> listTrips) {
         items = listTrips;
-
 
     }
 
@@ -37,48 +48,55 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
         Context context = viewGroup.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.cell_trip, viewGroup, false);
-        if(WaitingTripViewHolder.driver==null)
-            WaitingTripViewHolder.driver = this.driver;
-        return new WaitingTripViewHolder(view, context);
+
+        //InitWaitingTripViewHolder
+        WaitingTripViewHolder.setContext(context);
+        return new WaitingTripViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WaitingTripViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(@NonNull final WaitingTripViewHolder viewHolder, final int position) {
         viewHolder.setTrip(items.get(position));
 
+
+
+        //Set the Fold Listener (Maybe change position)
         final FoldingCell finalCell = (FoldingCell) viewHolder.itemView;
         viewHolder.setFoldListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finalCell.toggle(false);
-                registerToggle(position);
+                if (!WaitingTripAdapter.isBusyDriver()) {
+                    finalCell.toggle(false);
+
+                } else {
+                    if (WaitingTripViewHolder.getBusyKey().equals(items.get(position).getKey()))
+                        finalCell.toggle(true);
+
+                }
+
             }
         });
-        viewHolder.initItems();
+
+        viewHolder.init();
         viewHolder.tripIdTitleView.setText("Trip #" + (position + 1));
 
+
     }
+
 
     @Override
     public int getItemCount() {
         return items.size();
     }
 
-    // simple methods for register cell state changes
-    public void registerToggle(int position) {
-        if (unfoldedIndexes.contains(position))
-            registerFold(position);
-        else
-            registerUnfold(position);
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
-    public void registerFold(int position) {
-        unfoldedIndexes.remove(position);
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
-
-    public void registerUnfold(int position) {
-        unfoldedIndexes.add(position);
-    }
-
 
 }

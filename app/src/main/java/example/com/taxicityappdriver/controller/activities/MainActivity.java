@@ -9,12 +9,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import example.com.taxicityappdriver.R;
+import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
 import example.com.taxicityappdriver.controller.fragments.WaitingTripsFragment;
+import example.com.taxicityappdriver.entities.Trip;
+import example.com.taxicityappdriver.model.backend.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
+
+import static example.com.taxicityappdriver.controller.WaitingTripAdapter.isBusyDriver;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -23,7 +30,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private static BackEnd db = BackEndFactory.getInstance();
-    private WaitingTripsFragment waitingTripsFragmen;
+    private WaitingTripsFragment waitingTripsFragment;
+    private final String TAG = "mainActivity";
 
     private final int FRAGMENT_WAITING_TRIPS = 0;
     private final int FRAGMENT_HISTORY_TRIPS = 1;
@@ -61,6 +69,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // 4 - Handle Navigation Item Click
         int id = item.getItemId();
+
+        if (isBusyDriver()) {
+            Toast.makeText(this, "You can't change page you are in current trip !", Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
         switch (id) {
             case R.id.activity_main_drawer_last_trips:
@@ -134,9 +147,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     // 4 - Create each fragment page and show it
 
-    private void showWaitingTrip() {
-        if (this.waitingTripsFragmen == null) this.waitingTripsFragmen = new WaitingTripsFragment();
-        this.startTransactionFragment(this.waitingTripsFragmen);
+    public void showWaitingTrip() {
+        if (this.waitingTripsFragment == null) this.waitingTripsFragment = new WaitingTripsFragment();
+        this.startTransactionFragment(this.waitingTripsFragment);
     }
 
     // ---
@@ -174,5 +187,56 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         db.signOut();
         checkAuthentication();
     }
+
+    @Override
+    protected void onStop() {
+
+        Log.i(TAG, "onDestroy: ");
+        //Prevent quit
+        if (isBusyDriver()) {
+            Log.i(TAG, "DRIVER BUSY " + WaitingTripViewHolder.getBusyKey());
+            db.getTrip(WaitingTripViewHolder.getBusyKey(), new ActionCallBack<Trip>() {
+                @Override
+                public void onSuccess(Trip obj) {
+                    obj.setDriverEmail(null);
+                    obj.setStatusAsEnum(Trip.TripStatus.AVAILABLE);
+                    Log.i(TAG, "SUCESS DESTROY UPDATE " + obj.getKey());
+                    db.updateTrip(obj, new ActionCallBack() {
+                        @Override
+                        public void onSuccess(Object obj) {
+                            Log.i(TAG, "onSuccess: REUPDATE TRIP");
+
+                        }
+
+                        @Override
+                        public void onFailure(Exception exception) {
+                            Log.i(TAG, "onFailure: " + exception.getMessage());
+                        }
+
+                        @Override
+                        public void onProgress(String status, double percent) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    Log.i(TAG, "onFailure: " + exception.getMessage());
+
+
+                }
+
+                @Override
+                public void onProgress(String status, double percent) {
+
+                }
+            });
+        }
+
+        super.onStop();
+
+    }
+
 
 }

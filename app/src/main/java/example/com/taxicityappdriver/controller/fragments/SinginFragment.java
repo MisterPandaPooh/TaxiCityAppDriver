@@ -129,7 +129,7 @@ public class SinginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //if (!isValid())
-                  //  return;
+                //  return;
 
                 btnSubmit.setEnabled(false);
                 try {
@@ -149,7 +149,7 @@ public class SinginFragment extends Fragment {
                                     .edit()
                                     .putString(PREFS_EMAIL, emailEditText.getText().toString())
                                     .putString(PREFS_PASSWORD, passwordEditText.getText().toString())
-                                    .apply();
+                                    .commit();
                         }
 
                         @Override
@@ -157,8 +157,7 @@ public class SinginFragment extends Fragment {
 
                         }
                     });
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     helperTextView.setVisibility(View.VISIBLE);
                     helperTextView.setText(e.getMessage());
                     btnSubmit.setEnabled(true);

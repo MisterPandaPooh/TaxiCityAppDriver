@@ -19,7 +19,7 @@ public class Driver {
     protected long creditCardNumber;
     protected long cVV;
     protected String expireDateCreditCard;
-    protected Date createdDate;
+    protected String createdDate;
     protected double currentLocationLat;
     protected double currentLocationLong;
     protected boolean isBusy;
@@ -110,19 +110,15 @@ public class Driver {
         this.currentLocationLong = currentLocationLong;
     }
 
-
     public String getCreatedDate() {
-        if (createdDate == null)
-            return null;
-        return Helpers.ISO_8601_FORMAT.format(createdDate);
+        return createdDate;
     }
 
     public void setCreatedDate(String createdDate) {
-        if (createdDate == null)
-            this.createdDate = null;
-        else
-            this.createdDate = new Date(createdDate);
+        this.createdDate = createdDate;
     }
+
+    @Exclude
 
     public int getCheckAroundAroundKm() {
         return checkAroundAroundKm;
@@ -134,13 +130,10 @@ public class Driver {
 
     @Exclude
     public Date getCreatedDateAsDate() {
-        return createdDate;
+        return new Date(createdDate);
     }
 
-    @Exclude
-    public void setCreatedDateAsDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
+
 
     public boolean isBusy() {
         return isBusy;
