@@ -480,7 +480,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
                 busyKey = null;
                 ((ViewGroup) itemView.getParent()).removeView(itemView);
-                getAdapterPosition()
+                getAdapterPosition();
 
             }
 
