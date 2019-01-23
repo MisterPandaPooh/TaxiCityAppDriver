@@ -3,7 +3,6 @@ package example.com.taxicityappdriver.controller;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -26,12 +25,14 @@ import com.ramotion.fluidslider.FluidSlider;
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.entities.Trip;
+import example.com.taxicityappdriver.model.entities.Trip;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
-import example.com.taxicityappdriver.model.backend.NotifyDataChange;
+import example.com.taxicityappdriver.model.interfaces.NotifyDataChange;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+
+import static example.com.taxicityappdriver.model.helpers.Helpers.ucFirst;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +50,8 @@ public class WaitingTripsFragment extends Fragment {
 
     private static boolean switchByDistanceState;
     private static boolean switchByCityState;
+    private static int distanceSavedState;
+    private static String citySavedInstance;
 
     public WaitingTripsFragment() {
         // Required empty public constructor
@@ -69,16 +72,11 @@ public class WaitingTripsFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                //Prevent Busy driver to quit the trip.
-                if (false) {
-                    Toast.makeText(getContext(), "You can't refresh when your have a trip in progress !", Toast.LENGTH_SHORT).show();
-                    swipeRefreshLayout.setRefreshing(false);
-                } else {
-                    //Reload the fragment
-                    db.stopNotifyToTripList();
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.detach(MyFragment).attach(MyFragment).commit();
-                }
+                //Reload the fragment
+                db.stopNotifyToTripList();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(MyFragment).attach(MyFragment).commit();
+
 
             }
         });
@@ -93,26 +91,27 @@ public class WaitingTripsFragment extends Fragment {
         });
 
 
-        //Initialisation of the RecyclerView.
-        this.initRecyclerView(view);
+        if (WaitingTripAdapter.isBusyDriver()) {
+            switchByDistanceState = false;
+            switchByCityState = false;
+        }
+
+        if (switchByDistanceState)
+            applyFilterByDistance(distanceSavedState);
+        else if (switchByCityState)
+            applyFilterByCity("Jeru");
+        else
+            initRecyclerView();
 
         return view;
 
     }
 
 
-    private void refresh() {
-        db.stopNotifyToTripList();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(this).attach(this).commit();
-    }
-
     /**
      * Initialisation of the RecyclerView.
-     *
-     * @param v
      */
-    private void initRecyclerView(final View v) {
+    private void initRecyclerView() {
 
         //Init Layout Manager for RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -128,7 +127,6 @@ public class WaitingTripsFragment extends Fragment {
                 if (recyclerView.getAdapter() == null) {
                     items = obj;
                     WaitingTripAdapter adapter = new WaitingTripAdapter(items);
-                    //adapter.setHasStableIds(true);
                     recyclerView.setAdapter(adapter);
 
                 } else
@@ -166,13 +164,12 @@ public class WaitingTripsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         //Initialisation Of data
-        db.notifyToTripListWaitingByDistance(6000, new NotifyDataChange<List<Trip>>() {
+        db.notifyToTripListWaitingByDistance(distance, new NotifyDataChange<List<Trip>>() {
             @Override
             public void OnDataChanged(List<Trip> obj) {
                 if (recyclerView.getAdapter() == null) {
                     items = obj;
                     WaitingTripAdapter adapter = new WaitingTripAdapter(items);
-                    //adapter.setHasStableIds(true);
                     recyclerView.setAdapter(adapter);
 
                 } else
@@ -227,11 +224,16 @@ public class WaitingTripsFragment extends Fragment {
 
 
     private void showFilterDialog() {
+        if (WaitingTripAdapter.isBusyDriver()) {
+            Toast.makeText(getContext(), "You can't apply a filter in current trip !", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         //Init Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_filter_waiting_trip, null);
+
 
         final Switch filterByCity = dialogView.findViewById(R.id.filter_by_city_switch);
         final Switch filterByDistance = dialogView.findViewById(R.id.filter_by_distance_switch);
@@ -248,7 +250,7 @@ public class WaitingTripsFragment extends Fragment {
             @Override
             public Unit invoke(Float pos) {
                 final String value = String.valueOf((int) (minDistance + totalDisatance * pos));
-                fluidSliderDistance.setBubbleText(value + " km");
+                fluidSliderDistance.setBubbleText(value);
                 return Unit.INSTANCE;
             }
         });
@@ -261,6 +263,8 @@ public class WaitingTripsFragment extends Fragment {
         } else if (switchByCityState) {
             filterByCity.setChecked(true);
             linearLayourCity.setVisibility(View.VISIBLE);
+            if (citySavedInstance != null)
+                cityNameEditText.setText(citySavedInstance);
         }
 
         filterByDistance.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -296,11 +300,15 @@ public class WaitingTripsFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (switchByDistanceState) {
-                    int distance = (int) (minDistance + totalDisatance * fluidSliderDistance.getPosition());
-                    applyFilterByDistance(distance);
+                    distanceSavedState = (int) (minDistance + totalDisatance * fluidSliderDistance.getPosition());
+                    applyFilterByDistance(distanceSavedState);
                 } else if (switchByCityState) {
-                    if (cityNameEditText != null && !TextUtils.isEmpty(cityNameEditText.getText()))
-                        applyFilterByCity(cityNameEditText.getText().toString());
+                    if (cityNameEditText != null && !TextUtils.isEmpty(cityNameEditText.getText())) {
+                        citySavedInstance = ucFirst(cityNameEditText.getText().toString());
+                        applyFilterByCity(citySavedInstance);
+                    }
+                } else {
+                    initRecyclerView();
                 }
 
 

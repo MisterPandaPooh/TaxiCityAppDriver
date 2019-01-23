@@ -1,4 +1,4 @@
-package example.com.taxicityappdriver.controller.services;
+package example.com.taxicityappdriver.services;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,8 +7,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
-import example.com.taxicityappdriver.entities.Trip;
-import example.com.taxicityappdriver.model.backend.ActionCallBack;
+import example.com.taxicityappdriver.model.entities.Trip;
+import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
 

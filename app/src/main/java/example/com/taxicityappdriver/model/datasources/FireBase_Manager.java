@@ -25,12 +25,12 @@ import example.com.taxicityappdriver.controller.WaitingTripAdapter;
 import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
 import example.com.taxicityappdriver.model.helpers.Helpers;
 import example.com.taxicityappdriver.model.helpers.LocationHelper;
-import example.com.taxicityappdriver.entities.Driver;
-import example.com.taxicityappdriver.entities.Trip;
-import example.com.taxicityappdriver.model.backend.ActionCallBack;
+import example.com.taxicityappdriver.model.entities.Driver;
+import example.com.taxicityappdriver.model.entities.Trip;
+import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
-import example.com.taxicityappdriver.model.backend.CheckBoleanMethodCondition;
-import example.com.taxicityappdriver.model.backend.NotifyDataChange;
+import example.com.taxicityappdriver.model.interfaces.CheckBooleanMethodCondition;
+import example.com.taxicityappdriver.model.interfaces.NotifyDataChange;
 
 public class FireBase_Manager implements BackEnd<String> {
     private static FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -158,9 +158,6 @@ public class FireBase_Manager implements BackEnd<String> {
         });
 
     }
-
-
-
 
 
     @Override
@@ -590,7 +587,7 @@ public class FireBase_Manager implements BackEnd<String> {
         }
     }*/
 
-    public void notifyToTripList(final NotifyDataChange<List<Trip>> notifyDataChange, final CheckBoleanMethodCondition<Trip> condition) {
+    public void notifyToTripList(final NotifyDataChange<List<Trip>> notifyDataChange, final CheckBooleanMethodCondition<Trip> condition) {
         if (notifyDataChange != null) {
 
             if (tripRefChildEventListener != null) {
@@ -610,7 +607,6 @@ public class FireBase_Manager implements BackEnd<String> {
                     if (condition == null || condition.isTrue(trip)) {
 
 
-
                         for (int i = 0; i < Trips.size(); i++) {
                             if (Trips.get(i).getKey().equals(key)) {
                                 Trips.set(i, trip);
@@ -619,7 +615,7 @@ public class FireBase_Manager implements BackEnd<String> {
                             }
                         }
 
-                        if(!contains)
+                        if (!contains)
                             Trips.add(trip);
 
                         notifyDataChange.OnDataChanged(Trips);
@@ -687,16 +683,16 @@ public class FireBase_Manager implements BackEnd<String> {
     public void notifyToTripListWaiting(final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
-        notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
+        notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
 
                 //Prevent Delete Cell on refresh
                 boolean flag = false;
-                if(WaitingTripAdapter.isBusyDriver() && obj.getKey().equals(WaitingTripViewHolder.getBusyKey()) &&  obj.getDriverEmail().equals(getCurrentDriver().getEmail()) )
+                if (WaitingTripAdapter.isBusyDriver() && obj.getKey().equals(WaitingTripViewHolder.getBusyKey()) && obj.getDriverEmail().equals(getCurrentDriver().getEmail()) && obj.getStatusAsEnum() == Trip.TripStatus.IN_PROGRESS)
                     flag = true;
 
-                return flag || obj.getStatusAsEnum() == Trip.TripStatus.AVAILABLE ;
+                return flag || obj.getStatusAsEnum() == Trip.TripStatus.AVAILABLE;
             }
         });
     }
@@ -704,7 +700,7 @@ public class FireBase_Manager implements BackEnd<String> {
     public void notifyToTripListFinished(final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
-        notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
+        notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
                 return obj.getStatusAsEnum() == Trip.TripStatus.FINISHED;
@@ -715,7 +711,7 @@ public class FireBase_Manager implements BackEnd<String> {
     public void notifyToTripListByDriver(final String driverEmail, final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
-        notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
+        notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
                 return obj.getDriverEmail().equals(driverEmail);
@@ -726,10 +722,10 @@ public class FireBase_Manager implements BackEnd<String> {
     public void notifyToTripListWaitingByCity(final String destinationCity, final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
-        notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
+        notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
-                return obj.getDestinationCity().equals(destinationCity) && obj.getStatusAsEnum() == Trip.TripStatus.AVAILABLE;
+                return destinationCity.equals(obj.getDestinationCity()) && obj.getStatusAsEnum() == Trip.TripStatus.AVAILABLE;
             }
         });
     }
@@ -737,7 +733,7 @@ public class FireBase_Manager implements BackEnd<String> {
     public void notifyToTripListWaitingByDistance(final int distanceInKm, final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
-        notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
+        notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
                 return LocationHelper.calculDistanceFromYou(obj, getCurrentDriver()) / 1000 < distanceInKm;
@@ -749,7 +745,7 @@ public class FireBase_Manager implements BackEnd<String> {
     public void notifyToTripListByAmounth(final double min, final double max, final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
-        notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
+        notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
                 double price = LocationHelper.calculTripDistance(obj) / 1000 * Helpers.PRICE_BY_KM;
@@ -763,7 +759,7 @@ public class FireBase_Manager implements BackEnd<String> {
     public void notifyToTripListBeforeDate(final Date date, final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
-        notifyToTripList(notifyDataChange, new CheckBoleanMethodCondition<Trip>() {
+        notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
                 return (obj.getStartingHourAsDate().before(date));

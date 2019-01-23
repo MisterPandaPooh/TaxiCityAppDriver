@@ -15,12 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.Date;
-
 import example.com.taxicityappdriver.R;
 import example.com.taxicityappdriver.controller.activities.MainActivity;
-import example.com.taxicityappdriver.entities.Driver;
-import example.com.taxicityappdriver.model.backend.ActionCallBack;
+import example.com.taxicityappdriver.model.entities.Driver;
+import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
 import example.com.taxicityappdriver.model.helpers.Helpers;
@@ -97,7 +95,7 @@ public class SignUpFragment extends Fragment {
                 TextUtils.isEmpty(creditCardNumber.getText().toString()) ||
                 TextUtils.isEmpty(expireOnEditText.getText().toString()) ||
                 TextUtils.isEmpty(cvvEditText.getText().toString())
-                ) {
+        ) {
             showHelper("Please fill al required fields.", false);
             return false;
         }
@@ -209,7 +207,6 @@ public class SignUpFragment extends Fragment {
                                 public void onSuccess(Object obj) {
                                     showHelper("Succes Sign Up", true);
                                     initMainActivity();
-
 
 
                                 }

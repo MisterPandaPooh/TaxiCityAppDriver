@@ -9,16 +9,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
 import example.com.taxicityappdriver.controller.WaitingTripsFragment;
-import example.com.taxicityappdriver.controller.services.ClosingService;
-import example.com.taxicityappdriver.entities.Trip;
-import example.com.taxicityappdriver.model.backend.ActionCallBack;
+import example.com.taxicityappdriver.services.ClosingService;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
 

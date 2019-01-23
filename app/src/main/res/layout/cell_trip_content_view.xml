@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container_cell"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/container_cell"
     android:background="@drawable/item_trip_background"
     android:descendantFocusability="blocksDescendants"
+
     android:visibility="gone">
 
     <LinearLayout
@@ -30,10 +31,10 @@
                     android:layout_width="fill_parent"
                     android:layout_height="30dp"
                     android:background="@drawable/title_trip_id_item"
+                    android:gravity="center_vertical"
                     android:text="About this trip"
                     android:textAlignment="center"
-                    android:textAllCaps="true"
-                    android:gravity="center_vertical"/>
+                    android:textAllCaps="true" />
 
                 <ImageView
                     android:id="@+id/header_img"
@@ -214,11 +215,11 @@
 
 
                 <LinearLayout
+                    android:id="@+id/customer_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:background="@drawable/img_item_trip"
-                    android:id="@+id/customer_btn"
                     android:padding="1dp">
 
                     <ImageView
@@ -264,52 +265,103 @@
 
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:layout_margin="8dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
             <Button
                 android:id="@+id/sms_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:backgroundTint="@android:color/holo_blue_dark"
                 android:drawableLeft="@drawable/ic_sms"
-                android:minWidth="120dp"
                 android:text="Sms" />
 
             <Button
                 android:id="@+id/call_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:backgroundTint="@color/colorTaxiYellow"
                 android:drawableLeft="@drawable/ic_phone"
-                android:minWidth="120dp"
                 android:text="Phone" />
 
 
             <Button
                 android:id="@+id/mail_btn"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:backgroundTint="@android:color/holo_red_light"
                 android:drawableLeft="@drawable/ic_mail"
-                android:minWidth="120dp"
                 android:text="Email" />
 
 
         </LinearLayout>
 
-
         <Button
             android:id="@+id/request_trip_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
+            android:layout_margin="0dp"
             android:backgroundTint="@color/colorPrimary"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
             android:text="Request trip !"
             android:textColor="#fff"
             android:textStyle="bold"
+
             />
+
+
+        <View
+            android:id="@+id/divider_requested"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@color/colorTaxiBlack"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="1dp"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+
+            <Button
+                android:id="@+id/cancel_trip_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:backgroundTint="@color/colorDanger"
+                android:paddingTop="15dp"
+
+                android:paddingBottom="15dp"
+                android:text="cancel"
+                android:textColor="#fff"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/end_trip_btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:backgroundTint="@color/colorSuccess"
+                android:paddingTop="15dp"
+
+                android:paddingBottom="15dp"
+                android:text="End trip"
+                android:textColor="#fff"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

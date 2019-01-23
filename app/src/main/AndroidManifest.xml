@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".controller.services.ClosingService"
+            android:name=".services.ClosingService"
             android:stopWithTask="false" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"

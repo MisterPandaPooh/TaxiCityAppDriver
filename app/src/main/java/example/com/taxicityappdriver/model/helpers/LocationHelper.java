@@ -2,8 +2,8 @@ package example.com.taxicityappdriver.model.helpers;
 
 import android.location.Location;
 
-import example.com.taxicityappdriver.entities.Driver;
-import example.com.taxicityappdriver.entities.Trip;
+import example.com.taxicityappdriver.model.entities.Driver;
+import example.com.taxicityappdriver.model.entities.Trip;
 
 public class LocationHelper {
     public static float calculTripDistance(Trip trip) {

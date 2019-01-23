@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,18 +13,20 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
+
         <TextView
-            android:layout_width="130dp"
             style="@style/labelStyleForm"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:text="Filtering By City :"
-            />
+            android:layout_gravity="start"
+            android:text="Filtering By City :" />
+
         <android.widget.Switch
+            android:id="@+id/filter_by_city_switch"
             android:layout_width="wrap_content"
-            android:textAlignment="center"
             android:layout_height="wrap_content"
             android:switchMinWidth="100dp"
-            android:id="@+id/filter_by_city_switch"/>
+            android:textAlignment="center" />
     </LinearLayout>
 
     <LinearLayout
@@ -81,6 +84,6 @@
         app:size="small"
         app:end_text="200"
         app:start_text="5"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
 </LinearLayout>

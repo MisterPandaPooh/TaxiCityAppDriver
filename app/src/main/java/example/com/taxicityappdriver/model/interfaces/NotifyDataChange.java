@@ -1,4 +1,4 @@
-package example.com.taxicityappdriver.model.backend;
+package example.com.taxicityappdriver.model.interfaces;
 
 public interface NotifyDataChange<T> {
     void OnDataChanged(T obj);

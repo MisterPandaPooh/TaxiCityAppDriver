@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import example.com.taxicityappdriver.R;
 import example.com.taxicityappdriver.controller.activities.MainActivity;
-import example.com.taxicityappdriver.model.backend.ActionCallBack;
+import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
 import example.com.taxicityappdriver.model.helpers.Helpers;

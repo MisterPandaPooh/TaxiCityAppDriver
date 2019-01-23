@@ -19,7 +19,7 @@ public  class Helpers {
         }
     }
 
-    public String convertMillisToDate(long timeStamp){
+    public static String convertMillisToDate(long timeStamp){
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timeStamp);
 
@@ -30,5 +30,9 @@ public  class Helpers {
         int mMinutes = calendar.get(Calendar.MINUTE);
 
         return mDay+"/"+mMonth+"/"+mYear+" - "+mHours+":"+mMinutes;
+    }
+
+    public static String ucFirst(String chaine){
+        return chaine.substring(0, 1).toUpperCase()+ chaine.substring(1).toLowerCase();
     }
 }

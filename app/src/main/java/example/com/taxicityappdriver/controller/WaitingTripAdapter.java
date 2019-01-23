@@ -1,9 +1,7 @@
 package example.com.taxicityappdriver.controller;
 
 import android.content.Context;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,7 @@ import com.ramotion.foldingcell.FoldingCell;
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.entities.Trip;
+import example.com.taxicityappdriver.model.entities.Trip;
 
 public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHolder> {
 
@@ -64,7 +62,12 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
             @Override
             public void onClick(View v) {
                 if (!WaitingTripAdapter.isBusyDriver()) {
-                    finalCell.toggle(false);
+                    finalCell.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            finalCell.toggle(false);
+                        }
+                    });
                 }
 
             }

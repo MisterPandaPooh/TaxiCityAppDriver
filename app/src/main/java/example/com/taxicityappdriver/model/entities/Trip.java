@@ -1,10 +1,8 @@
-package example.com.taxicityappdriver.entities;
+package example.com.taxicityappdriver.model.entities;
 
 import com.google.firebase.database.Exclude;
 
 import java.util.Date;
-
-import example.com.taxicityappdriver.model.helpers.Helpers;
 
 public class Trip {
 
@@ -164,7 +162,7 @@ public class Trip {
     }
     @Exclude
     public Date getEndingHourAsDate() {
-        return new Date(endingHour);
+        return  new Date(Long.parseLong(endingHour));
     }
 
 

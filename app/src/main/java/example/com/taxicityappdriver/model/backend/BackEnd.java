@@ -3,8 +3,10 @@ package example.com.taxicityappdriver.model.backend;
 import java.util.Date;
 import java.util.List;
 
-import example.com.taxicityappdriver.entities.Driver;
-import example.com.taxicityappdriver.entities.Trip;
+import example.com.taxicityappdriver.model.entities.Driver;
+import example.com.taxicityappdriver.model.entities.Trip;
+import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
+import example.com.taxicityappdriver.model.interfaces.NotifyDataChange;
 
 public interface BackEnd<T> {
     //trip

@@ -1,11 +1,8 @@
-package example.com.taxicityappdriver.entities;
+package example.com.taxicityappdriver.model.entities;
 
 import com.google.firebase.database.Exclude;
 
-import java.net.URL;
 import java.util.Date;
-
-import example.com.taxicityappdriver.model.helpers.Helpers;
 
 public class Driver {
 
