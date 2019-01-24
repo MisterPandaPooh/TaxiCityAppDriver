@@ -5,8 +5,8 @@
     android:id="@+id/my_drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     tools:context=".controller.activities.MainActivity">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,40 +26,7 @@
         <FrameLayout
             android:id="@+id/activity_main_frame_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-               android:layout_gravity="center"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="250dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/logohdpi"
-                    android:contentDescription="TODO" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_margin="20dp"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textAllCaps="true"
-                    android:text="Welcome To TaxiCity Driver App ! " />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:gravity="center"
-                    android:textColor="@color/colorTaxiBlack"
-                    android:textSize="20sp"
-                    android:text=" This app can help to manage : \n Waiting and current trips, your profile, history of your previous trips. \n And many other things !! " />
-            </LinearLayout>
-
-
-        </FrameLayout>
+            android:layout_height="match_parent" />
 
 
     </LinearLayout>

@@ -33,7 +33,7 @@
         <receiver android:name=".services.MyBroadcastReceiver">
 
             <intent-filter>
-                <action android:name="new Order" />
+                <action android:name="NewOrder" />
             </intent-filter>
 
         </receiver>

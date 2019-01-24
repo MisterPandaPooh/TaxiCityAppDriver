@@ -1,5 +1,6 @@
 package example.com.taxicityappdriver.model.datasources;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -10,12 +11,16 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,6 +42,7 @@ public class FireBase_Manager implements BackEnd<String> {
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static DatabaseReference refTrips = db.getReference("Trips");
     private static DatabaseReference refDriver = db.getReference("Drivers");
+    private static StorageReference refStorageProfilePictures = FirebaseStorage.getInstance().getReference("ProfilePictures");
     private final String TAG = "firebaseManager";
     private static Driver currentDriver;
     private static Trip currentTrip;
@@ -509,6 +515,12 @@ public class FireBase_Manager implements BackEnd<String> {
     }
 
 
+    @Override
+    public Uri getUserProfilePicture() {
+        String uri = mAuth.getCurrentUser().getPhotoUrl().toString();
+        return Uri.parse(uri);
+    }
+
     private static String EncodeString(String string) {
         return string.replace(".", ",");
     }
@@ -693,13 +705,48 @@ public class FireBase_Manager implements BackEnd<String> {
         notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
-                if(obj.getStartingHourAsDate()==null)
+                if (obj.getStartingHourAsDate() == null)
                     return false;
-                return (obj.getStartingHourAsDate().before(date)) &&  obj.getStatusAsEnum()== Trip.TripStatus.FINISHED && obj.getDriverEmail().equals(getCurrentDriver().getEmail());
+                return (obj.getStartingHourAsDate().before(date)) && obj.getStatusAsEnum() == Trip.TripStatus.FINISHED && obj.getDriverEmail().equals(getCurrentDriver().getEmail());
             }
         });
     }
 
+
+    public void changeUserPassword(String newPassword, final ActionCallBack action) {
+        mAuth.getCurrentUser().updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                action.onSuccess("Success to update password");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                action.onFailure(e);
+            }
+        });
+    }
+
+    public void updateProfilePicture(Uri uri, final ActionCallBack action) {
+
+        StorageReference ref = refStorageProfilePictures.child(uri.getLastPathSegment());
+        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                String downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                if (downloadUrl != null)
+                    mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(Uri.parse(downloadUrl))
+                            .build());
+                action.onSuccess("Updated Sucesss");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                action.onFailure(e);
+            }
+        });
+    }
 
     public void stopNotifyToTripList() {
         if (tripRefChildEventListener != null) {

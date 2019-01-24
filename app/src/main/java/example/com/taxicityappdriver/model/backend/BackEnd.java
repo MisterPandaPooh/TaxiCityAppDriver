@@ -1,5 +1,8 @@
 package example.com.taxicityappdriver.model.backend;
 
+import android.net.Uri;
+
+import java.net.URI;
 import java.util.Date;
 import java.util.List;
 
@@ -19,7 +22,6 @@ public interface BackEnd<T> {
     void updateTrip(final Trip toUpdate, final ActionCallBack<T> action);
 
 
-
     //Driver
     void addDriver(final Driver driver, final ActionCallBack<T> action);
 
@@ -32,21 +34,41 @@ public interface BackEnd<T> {
 
     //Auth
     void signUp(String email, String password, final ActionCallBack<Object> action);
+
     void signIn(String email, String password, final ActionCallBack<Object> action);
+
     void signOut();
+
     void forgotPassword(String email, final ActionCallBack<T> action);
+
     boolean isSigned();
+
     Driver getCurrentDriver();
+
     void deleteCurrentUser();
 
+    void changeUserPassword(String newPassword, ActionCallBack<T> action);
+
+    public void updateProfilePicture(Uri uri, ActionCallBack<T> action);
+
+    public Uri getUserProfilePicture();
+
     void notifyToTripListAll(final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void notifyToTripListWaiting(final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void notifyToTripListBeforeDate(final Date date, final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void notifyToTripListByAmounth(final double min, final double max, final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void notifyToTripListWaitingByDistance(final int distanceInKm, final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void notifyToTripListWaitingByCity(final String destinationCity, final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void notifyToTripListByDriver(final String driverEmail, final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void notifyToTripListFinished(final NotifyDataChange<List<Trip>> notifyDataChange);
+
     void stopNotifyToTripList();
 
 

@@ -505,11 +505,16 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                         .show();
 
                 busyKey = null;
+
                 if (onEndTripSimpleCallBack != null)
                     onEndTripSimpleCallBack.execute();
 
                 //Not needed
-                db.getCurrentDriver().setBusy(false);
+                Driver driver = db.getCurrentDriver();
+                driver.setBusy(false);
+                driver.setTotalTripsCounter(driver.getTotalTripsCounter() + 1);
+                driver.setTotalSumOfTrips(driver.getTotalSumOfTrips() + TripHelper.calculatePrice(tripDistanceInKm));
+
 
                 db.updateDriver(db.getCurrentDriver(), new ActionCallBack() {
                     @Override

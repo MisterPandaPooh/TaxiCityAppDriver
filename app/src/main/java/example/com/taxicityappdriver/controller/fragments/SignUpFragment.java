@@ -29,6 +29,7 @@ import example.com.taxicityappdriver.model.helpers.Helpers;
 public class SignUpFragment extends Fragment {
 
 
+    //View fields
     private EditText emailEditText;
     private EditText passwordEditText;
     private EditText passwordConfirmEditText;
@@ -41,8 +42,11 @@ public class SignUpFragment extends Fragment {
     private EditText cvvEditText;
     private TextView helperTextView;
     private Button btnSubmit;
-    private BackEnd db = BackEndFactory.getInstance();
-    public static final String TAG = "signupfragment";
+
+
+    public static final String TAG = "SignUpFragment";
+    private static BackEnd db = BackEndFactory.getInstance(); //Database Instance
+
 
     public SignUpFragment() {
         // Required empty public constructor
@@ -60,6 +64,7 @@ public class SignUpFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //BindView
         emailEditText = view.findViewById(R.id.email_input_form);
         passwordEditText = view.findViewById(R.id.password_input_form);
         passwordConfirmEditText = view.findViewById(R.id.password_confirm_signup);
@@ -77,11 +82,17 @@ public class SignUpFragment extends Fragment {
 
     }
 
+    /**
+     * Check if the sign up form is valid
+     *
+     * @return true if is a valid form.
+     */
     private boolean isValid() {
+
         if (emailEditText == null || passwordEditText == null ||
                 passwordConfirmEditText == null || firstNameEditText == null ||
                 lastNameEditText == null || idNumberEditText == null || phoneEditText == null || creditCardNumber == null || expireOnEditText == null || cvvEditText == null) {
-            showHelper("Please fill al required fields.", false);
+            showHelper(getString(R.string.please_fill_all_required_error_msg), false);
             return false;
         }
 
@@ -96,42 +107,42 @@ public class SignUpFragment extends Fragment {
                 TextUtils.isEmpty(expireOnEditText.getText().toString()) ||
                 TextUtils.isEmpty(cvvEditText.getText().toString())
         ) {
-            showHelper("Please fill al required fields.", false);
+            showHelper(getString(R.string.please_fill_all_required_error_msg), false);
             return false;
         }
 
         if (!Helpers.isValidEmail(emailEditText.getText().toString())) {
-            showHelper("Please enter a correct email", false);
+            showHelper(getString(R.string.enter_valid_email_error_msg), false);
             return false;
         }
 
         if (cvvEditText.getText().length() < 3) {
-            showHelper("Please enter a correct CVV", false);
+            showHelper(getString(R.string.enter_correct_cvv_error_msg), false);
             return false;
         }
 
         if (phoneEditText.getText().length() < 10) {
-            showHelper("Please enter a correct phone", false);
+            showHelper(getString(R.string.enter_correct_phone_error_msg), false);
             return false;
         }
 
         if (expireOnEditText.getText().length() < 6) {
-            showHelper("Please enter a correct Expiration Date MMYYYY", false);
+            showHelper(getString(R.string.enter_corect_expiration_date_error_msg), false);
             return false;
         }
 
         if (creditCardNumber.getText().length() < 16) {
-            showHelper("Please enter a correct Credit card number", false);
+            showHelper(getString(R.string.enter_correct_cb_error_msg), false);
             return false;
         }
 
         if (passwordEditText.getText().length() < 6) {
-            showHelper("Password must Have at least 6 characters", false);
+            showHelper(getString(R.string.min_6_password_char_error_msg), false);
             return false;
 
         }
         if (!passwordEditText.getText().toString().equals(passwordConfirmEditText.getText().toString())) {
-            showHelper("Password doesn't mathching !", false);
+            showHelper(getString(R.string.pasword_not_matching_error_msg), false);
             return false;
         }
 
@@ -139,6 +150,12 @@ public class SignUpFragment extends Fragment {
 
     }
 
+    /**
+     * Show The helper textview for displaying Success/Error message to user.
+     *
+     * @param msg       The Message to show.
+     * @param isSuccess The type of message (true) Success (false) Error
+     */
     private void showHelper(String msg, boolean isSuccess) {
         if (helperTextView == null)
             return;
@@ -152,6 +169,11 @@ public class SignUpFragment extends Fragment {
     }
 
 
+    /**
+     * Bind the View with a new driver object.
+     *
+     * @return Driver Obj
+     */
     private Driver formatDriver() {
         Driver driver = new Driver();
         driver.setEmail(emailEditText.getText().toString());
@@ -164,48 +186,51 @@ public class SignUpFragment extends Fragment {
         driver.setcVV(Long.parseLong(cvvEditText.getText().toString()));
         driver.setExpireDateCreditCard(expireOnEditText.getText().toString());
         driver.setBusy(false);
+        driver.setTotalSumOfTrips(0);
+        driver.setTotalTripsCounter(0);
         return driver;
     }
 
-    private View.OnClickListener backListener() {
 
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().recreate();
-            }
-        };
-    }
-
+    /**
+     * Submit button click listener.
+     * 1) Add the driver to Auth Database [In this case FirebaseAuth]
+     * 2) OnSuccess => add the Driver entity to the database.
+     *
+     * @return
+     */
     private View.OnClickListener submitSignUpListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
-                //if (!isValid())
-                //return;
+                //Check form Validation
+                if (!isValid())
+                    return;
 
                 try {
-                    formatDriver(); //For parsing
+                    formatDriver(); //Prevent Exception crash when Parsing Number.
                 } catch (Exception e) {
-                    return;
+                    showHelper(e.getMessage(), false);
                 }
 
                 btnSubmit.setEnabled(false);
 
-                //1 SignUp
-                //2 Add Driver to database
+
+
 
                 try {
+                    //1 SignUp to FireABse Auth
                     db.signUp(emailEditText.getText().toString(), passwordEditText.getText().toString(), new ActionCallBack<Object>() {
                         @Override
                         public void onSuccess(Object obj) {
                             final Driver driver = formatDriver();
+                            //2 Add Driver to database
                             db.addDriver(driver, new ActionCallBack() {
                                 @Override
                                 public void onSuccess(Object obj) {
-                                    showHelper("Succes Sign Up", true);
+                                    showHelper(getString(R.string.sign_up_success_msg), true);
                                     initMainActivity();
 
 
@@ -213,7 +238,7 @@ public class SignUpFragment extends Fragment {
 
                                 @Override
                                 public void onFailure(Exception exception) {
-                                    //remove signUP
+                                    //Remove user from FirebaseAuth
                                     showHelper(exception.getMessage(), false);
                                     db.deleteCurrentUser();
                                     btnSubmit.setEnabled(true);
@@ -246,10 +271,13 @@ public class SignUpFragment extends Fragment {
         };
     }
 
+    /**
+     * Init MainActivity
+     */
     private void initMainActivity() {
 
         Intent intent = new Intent(getContext(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); //reset backstack
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); //reset backStack
         startActivity(intent);
         if (getActivity() != null)
             getActivity().finish();

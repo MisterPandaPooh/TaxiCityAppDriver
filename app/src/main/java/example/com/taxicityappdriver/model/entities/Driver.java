@@ -20,7 +20,6 @@ public class Driver {
     protected double currentLocationLat;
     protected double currentLocationLong;
     protected boolean isBusy;
-    protected int checkAroundAroundKm;
     protected int totalTripsCounter;
     protected double totalSumOfTrips;
 
@@ -119,15 +118,6 @@ public class Driver {
         this.createdDate = createdDate;
     }
 
-    @Exclude
-
-    public int getCheckAroundAroundKm() {
-        return checkAroundAroundKm;
-    }
-
-    public void setCheckAroundAroundKm(int checkAroundAroundKm) {
-        this.checkAroundAroundKm = checkAroundAroundKm;
-    }
 
     @Exclude
     public Date getCreatedDateAsDate() {

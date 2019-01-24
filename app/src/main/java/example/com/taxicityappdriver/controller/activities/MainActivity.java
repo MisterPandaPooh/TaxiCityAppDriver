@@ -11,8 +11,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
+import example.com.taxicityappdriver.controller.fragments.SettingsFragment;
 import example.com.taxicityappdriver.services.DriverService;
 import example.com.taxicityappdriver.services.MyBroadcastReceiver;
 import example.com.taxicityappdriver.R;
@@ -28,47 +32,66 @@ import static example.com.taxicityappdriver.controller.WaitingTripAdapter.isBusy
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //FOR DESIGN
+    private static BackEnd db = BackEndFactory.getInstance();
     private Toolbar toolbar;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private static BackEnd db = BackEndFactory.getInstance();
     private WaitingTripsFragment waitingTripsFragment;
     private HistoryTripFragment historyTripFragment;
+    private SettingsFragment settingsFragment;
     private final String TAG = "mainActivity";
 
     private final int FRAGMENT_WAITING_TRIPS = 0;
     private final int FRAGMENT_HISTORY_TRIPS = 1;
     private final int FRAGMENT_SETTINGS = 2;
 
+
+    /**
+     * Create the activity and init it.
+     * 1) Check if the user is authenticated else start authActivity.
+     * 2) Register the Activity to the Services
+     * 3) Configure the ToolBar and Navigation Drawer.
+     * 4) Show firstFragment (After UI initialisation) [WaitingTripsFragments]
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
 
+        //Register for Notifications
         checkAuthentication();
 
         registerReceiver(
                 new MyBroadcastReceiver(),
-                new IntentFilter("New order"));
+                new IntentFilter("NewOrder"));
 
         startService(new Intent(getBaseContext(), DriverService.class));
 
-        // 6 - Configure all views
-
         this.configureToolBar();
-
         this.configureDrawerLayout();
-
         this.configureNavigationView();
 
         startService(new Intent(getBaseContext(), ClosingService.class));
 
+        initNavHeader(); //Init Profile picture and Name
+
+        findViewById(R.id.activity_main_frame_layout).post(new Runnable() {
+            @Override
+            public void run() {
+                showFirstFragment(); //Show after UI initialisation
+            }
+        });
+
     }
 
+    /***
+     * Handle back click to close menu
+     */
     @Override
     public void onBackPressed() {
-        // 5 - Handle back click to close menu
         if (this.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             this.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
@@ -76,15 +99,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Initialisation Profile picture and Name
+     */
+    private void initNavHeader() {
+        final TextView name = navigationView.getHeaderView(0).findViewById(R.id.name_nav_header);
+        name.post(new Runnable() {
+            @Override
+            public void run() {
+                //name.setText(db.getCurrentDriver().getFirstName()+" "+ db.getCurrentDriver().getLastName()+" - "+db.getCurrentDriver().getIdNumber());
+            }
+        });
 
+
+    }
+
+
+    /**
+     * Showing appropriate fragment when the item is selected in the menu.
+     *
+     * @param item item selected
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-        // 4 - Handle Navigation Item Click
         int id = item.getItemId();
 
+        //Prevent quit the activity when the driver is busy
         if (isBusyDriver()) {
-            Toast.makeText(this, "You can't change page you are in current trip !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -94,6 +138,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.activity_main_drawer_waiting_trips:
                 showFragment(FRAGMENT_WAITING_TRIPS);
+                break;
+            case R.id.activity_main_drawer_settings:
+                showFragment(FRAGMENT_SETTINGS);
                 break;
             case R.id.activity_main_drawer_log_out:
                 logOut();
@@ -112,13 +159,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // CONFIGURATION
     // ---------------------
 
-    // 1 - Configure Toolbar
+    /**
+     * Configure the Toolbar
+     */
     private void configureToolBar() {
         this.toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
     }
 
-    // 2 - Configure Drawer Layout
+    /**
+     * Configure Drawer Layout
+     */
     private void configureDrawerLayout() {
         this.drawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -126,7 +177,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
     }
 
-    // 3 - Configure NavigationView
+    /**
+     * Configure NavigationView
+     */
     private void configureNavigationView() {
         this.navigationView = (NavigationView) findViewById(R.id.activity_main_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -136,8 +189,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // FRAGMENTS
     // ---------------------
 
-    // 5 - Show fragment according an Identifier
-
+    /**
+     * Show fragment according an Identifier
+     *
+     * @param fragmentIdentifier
+     */
     private void showFragment(int fragmentIdentifier) {
         switch (fragmentIdentifier) {
             case FRAGMENT_WAITING_TRIPS:
@@ -147,32 +203,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this.showTripHistory();
                 break;
             case FRAGMENT_SETTINGS:
-                //this.showParamsFragment();
+                this.showSettingsFragment();
                 break;
             default:
                 break;
         }
     }
 
-    // ---
-
-    // 4 - Create each fragment page and show it
-
+    /**
+     * Show Waiting Fragment
+     */
     public void showWaitingTrip() {
-        if (this.waitingTripsFragment == null) this.waitingTripsFragment = new WaitingTripsFragment();
+        if (this.waitingTripsFragment == null)
+            this.waitingTripsFragment = new WaitingTripsFragment();
         this.startTransactionFragment(this.waitingTripsFragment);
     }
 
+    /**
+     * Show Trip history fragment
+     */
     public void showTripHistory() {
         if (this.historyTripFragment == null) this.historyTripFragment = new HistoryTripFragment();
         this.startTransactionFragment(this.historyTripFragment);
     }
 
+    /**
+     * Show Settings fragment
+     */
+    public void showSettingsFragment() {
+        if (this.settingsFragment == null) this.settingsFragment = new SettingsFragment();
+        this.startTransactionFragment(this.settingsFragment);
+    }
 
 
-    // ---
-
-    // 3 - Generic method that will replace and show a fragment inside the MainActivity Frame Layout
+    /**
+     * Generic method that will replace and show a fragment inside the MainActivity Frame Layout
+     *
+     * @param fragment
+     */
     private void startTransactionFragment(Fragment fragment) {
         if (!fragment.isVisible()) {
             getSupportFragmentManager().beginTransaction()
@@ -180,7 +248,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    // 1 - Show first fragment when activity is created
+    /**
+     * Show first fragment when activity is created
+     */
     private void showFirstFragment() {
         Fragment visibleFragment = getSupportFragmentManager().findFragmentById(R.id.activity_main_frame_layout);
         if (visibleFragment == null) {
@@ -192,6 +262,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    /**
+     * Check If the user is authenticated ELSE start AuthActivity
+     */
     private void checkAuthentication() {
         if (!db.isSigned()) {
             Intent intent = new Intent(this, AuthActivity.class);
@@ -201,15 +274,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * LogOut user (Destroy Database Instance)
+     */
     private void logOut() {
         db.signOut();
         checkAuthentication();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
     }
 
 

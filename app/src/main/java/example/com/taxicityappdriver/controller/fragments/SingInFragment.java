@@ -31,15 +31,18 @@ import example.com.taxicityappdriver.model.helpers.Helpers;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SinginFragment extends Fragment {
+public class SingInFragment extends Fragment {
+
+    //View Fields
     private EditText emailEditText;
     private EditText passwordEditText;
     private TextView helperTextView;
     private EditText emailForgotPassword;
-    private static BackEnd db = BackEndFactory.getInstance();
     private AlertDialog alertDialog;
 
-
+    //Instance [Factory of the DataBase
+    private static BackEnd db = BackEndFactory.getInstance();
+    //SharedPreference to save user Ids
     private static final String PREFS = "PREFS";
     private static final String PREFS_EMAIL = "PREFS_EMAIL";
     private static final String PREFS_PASSWORD = "PREFS_PASSWORD";
@@ -49,7 +52,7 @@ public class SinginFragment extends Fragment {
     SharedPreferences sharedPreferences; //BUG !
     private SignUpFragment signUpFragment = null;
 
-    public SinginFragment() {
+    public SingInFragment() {
         // Required empty public constructor
     }
 
@@ -61,37 +64,46 @@ public class SinginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_singin, container, false);
     }
 
+    /***
+     * OnCreatedView
+     * 1) Check if SignIn => if yes => MainActivity
+     * 2) Bind View
+     * 3) Init Listeners
+     * 4) If Id's saved => Restore them.
+     * @param view
+     * @param savedInstanceState
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //Check if SignIn => if yes => MainActivity
         if (db.isSigned())
             initMainActivity();
 
-        //test.insertData();
-
-        //Init Click listener
+        //Bind View
         btnSubmit = view.findViewById(R.id.submit_sign_in_btn_form);
-        LinearLayout joinUsLinearLayout = view.findViewById(R.id.join_us_btn);
-        TextView forgotPasswordTextView = view.findViewById(R.id.forgot_password);
-        btnSubmit.setOnClickListener(submitListener());
-        forgotPasswordTextView.setOnClickListener(forgotPasswordListener());
-        joinUsLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                configSignUpFragment();
-            }
-        });
-
         emailEditText = view.findViewById(R.id.email_input_form);
         passwordEditText = view.findViewById(R.id.password_input_form);
         helperTextView = view.findViewById(R.id.helper_form);
         emailForgotPassword = new EditText(getContext());
         alertDialog = new AlertDialog.Builder(getContext()).create();
+        LinearLayout joinUsLinearLayout = view.findViewById(R.id.join_us_btn);
+        TextView forgotPasswordTextView = view.findViewById(R.id.forgot_password);
 
-        //A tester apres signout
+        //Init Listeners
+        btnSubmit.setOnClickListener(submitListener());
+        forgotPasswordTextView.setOnClickListener(forgotPasswordListener());
+        joinUsLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                configSignUpFragment(); //Init the Register Fragments
+            }
+        });
+
+
+        //If Id's saved => Restore them.
         sharedPreferences = getActivity().getSharedPreferences(PREFS, getContext().MODE_PRIVATE);
-
         if (sharedPreferences != null) {
             //Restaure old values
             if (sharedPreferences.contains(PREFS_EMAIL) && sharedPreferences.contains(PREFS_PASSWORD)) {
@@ -104,32 +116,44 @@ public class SinginFragment extends Fragment {
     }
 
 
+    /**
+     * When submit sign in form button is clicked
+     *
+     * @return
+     */
     private View.OnClickListener submitListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //if (!isValid())
-                //  return;
+                //Check form Validation
+                if (!isValid())
+                    return;
 
+                //Prevent double submit
                 btnSubmit.setEnabled(false);
                 try {
 
+                    //SignIN in Database
                     db.signIn(emailEditText.getText().toString(), passwordEditText.getText().toString(), new ActionCallBack<Object>() {
                         @Override
                         public void onSuccess(Object obj) {
+                            //If signed start mainActivity
                             initMainActivity();
-                        }
 
-                        @Override
-                        public void onFailure(Exception exception) {
-                            helperTextView.setVisibility(View.VISIBLE);
-                            helperTextView.setText(exception.getMessage());
-                            btnSubmit.setEnabled(true);
+                            //Save value of user id's
                             sharedPreferences
                                     .edit()
                                     .putString(PREFS_EMAIL, emailEditText.getText().toString())
                                     .putString(PREFS_PASSWORD, passwordEditText.getText().toString())
-                                    .commit();
+                                    .apply();
+                        }
+
+                        @Override
+                        public void onFailure(Exception exception) {
+                            //Show in Helper exception
+                            helperTextView.setVisibility(View.VISIBLE);
+                            helperTextView.setText(exception.getMessage());
+                            btnSubmit.setEnabled(true);
                         }
 
                         @Override
@@ -150,39 +174,58 @@ public class SinginFragment extends Fragment {
     }
 
 
+    /**
+     * When forgot password is clicked show forgotPassword Dialog
+     *
+     * @return
+     */
     private View.OnClickListener forgotPasswordListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialogBuilder();
-
             }
         };
 
     }
 
+    /**
+     * Check if the form is valid.
+     *
+     * @return true if is valid
+     */
+
     private boolean isValid() {
         //HELPER
         if (emailEditText == null || passwordEditText == null) {
             helperTextView.setVisibility(View.VISIBLE);
-            helperTextView.setText("Please fill in all the required fields.");
+            helperTextView.setText(getString(R.string.please_fill_all_required_error_msg));
             return false;
         }
 
         if (TextUtils.isEmpty(emailEditText.getText()) || TextUtils.isEmpty(passwordEditText.getText())) {
             helperTextView.setVisibility(View.VISIBLE);
-            helperTextView.setText("Please fill in all the required fields.");
+            helperTextView.setText(getString(R.string.please_fill_all_required_error_msg));
             return false;
         }
         if (!Helpers.isValidEmail(emailEditText.getText().toString())) {
             helperTextView.setVisibility(View.VISIBLE);
-            helperTextView.setText("Please enter a valid email address.");
+            helperTextView.setText(getString(R.string.enter_valid_email_error_msg));
+            return false;
+        }
+
+        if (passwordEditText.getText().length() < 6) {
+            helperTextView.setVisibility(View.VISIBLE);
+            helperTextView.setText(getString(R.string.min_6_password_char_error_msg));
             return false;
         }
 
         return true;
     }
 
+    /**
+     * Initialisation of the mainActivity
+     */
     private void initMainActivity() {
 
         Intent intent = new Intent(getContext(), MainActivity.class);
@@ -192,7 +235,9 @@ public class SinginFragment extends Fragment {
             getActivity().finish();
     }
 
-    //Dialog forgot password
+    /**
+     * Dialog initialisation of faggoted password.
+     */
     private void dialogBuilder() {
 
 
@@ -200,59 +245,67 @@ public class SinginFragment extends Fragment {
                 LinearLayout.LayoutParams.MATCH_PARENT);
 
 
-        alertDialog.setTitle("Forgot Password");
-        alertDialog.setMessage("Enter email to reset password ");
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Reset Password !",
+        alertDialog.setTitle(getString(R.string.forgot_pasword_dialog_title));
+        alertDialog.setMessage(getString(R.string.forgot_pasword_dialog_msg));
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.reset_password_btn_dialog),
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, int which) {
 
                         //Valid form
                         if (TextUtils.isEmpty(emailForgotPassword.getText()) || !Helpers.isValidEmail(emailForgotPassword.getText().toString())) {
                             helperTextView.setVisibility(View.VISIBLE);
-                            helperTextView.setText("Please enter a valid email address.");
+                            helperTextView.setText(getString(R.string.enter_valid_email_error_msg));
                             return;
                         }
-                        int i = 2;
 
-                        db.forgotPassword(emailForgotPassword.getText().toString(), new ActionCallBack() {
-                            @Override
-                            public void onSuccess(Object obj) {
-                                helperTextView.setVisibility(View.VISIBLE);
-                                helperTextView.setTextColor(Color.GREEN);
-                                helperTextView.setText("Reset Password Email sent !");
-                                dialog.dismiss();
-                            }
+                        try {
+                            //Send Email for reset the password.
+                            db.forgotPassword(emailForgotPassword.getText().toString(), new ActionCallBack() {
+                                @Override
+                                public void onSuccess(Object obj) {
+                                    helperTextView.setVisibility(View.VISIBLE);
+                                    helperTextView.setTextColor(Color.GREEN);
+                                    helperTextView.setText(getString(R.string.reset_password_success_msg));
+                                    dialog.dismiss();
+                                }
 
-                            @Override
-                            public void onFailure(Exception exception) {
-                                helperTextView.setVisibility(View.VISIBLE);
-                                helperTextView.setText(exception.getMessage());
+                                @Override
+                                public void onFailure(Exception exception) {
+                                    helperTextView.setVisibility(View.VISIBLE);
+                                    helperTextView.setText(exception.getMessage());
 
-                            }
+                                }
 
-                            @Override
-                            public void onProgress(String status, double percent) {
+                                @Override
+                                public void onProgress(String status, double percent) {
 
-                            }
-                        });
+                                }
+                            });
+                        } catch (Exception e) {
+                            helperTextView.setVisibility(View.VISIBLE);
+                            helperTextView.setText(e.getMessage());
+                        }
 
 
                     }
                 });
 
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel_btn_dialog),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                        dialog.dismiss(); //Close the dialog
                     }
                 });
-
         emailForgotPassword.setLayoutParams(lp2);
         alertDialog.setView(emailForgotPassword);
+
         alertDialog.show();
 
     }
 
+    /**
+     * Initialisation of the Sign up fragment
+     */
     private void configSignUpFragment() {
 
         //Singleton pattern of the fragment.
@@ -262,7 +315,6 @@ public class SinginFragment extends Fragment {
         //Get Fragment manager from the parent
         FragmentManager fm = getActivity().getSupportFragmentManager();
 
-        //Adding Welcome Fragment
         if (!signUpFragment.isVisible()) {
             fm.beginTransaction().remove(fm.findFragmentById(R.id.main_frame_layout)).commit();
             fm.beginTransaction().replace(R.id.main_frame_layout, signUpFragment).commit();

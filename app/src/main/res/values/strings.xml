@@ -37,4 +37,23 @@
     <string name="tz_hint">342532173</string>
     <string name="in_progress_cell">In progress ...</string>
     <string name="price_trip_lbl">Price of the Trip</string>
+    <string name="about_this_trip_header">About this trip</string>
+    <string name="default_description">image</string>
+    <string name="source_address_title_content_cell">Source address :</string>
+    <string name="source_adresse_place_holder_content_cell">1 Mail de la grosse borne 95400 villiers le bel</string>
+    <string name="busy_driver_not_quit_msg">You can\'t change page you are in current trip !</string>
+    <string name="please_fill_all_required_error_msg">Please fill in all the required fields.</string>
+    <string name="enter_valid_email_error_msg">Please enter a valid email address.</string>
+    <string name="min_6_password_char_error_msg">Password must have at least 6 chars.</string>
+    <string name="forgot_pasword_dialog_title">Forgot Password</string>
+    <string name="forgot_pasword_dialog_msg">Enter email to reset password</string>
+    <string name="reset_password_success_msg">Reset Password Email sent !</string>
+    <string name="reset_password_btn_dialog">Reset Password !</string>
+    <string name="cancel_btn_dialog">Cancel</string>
+    <string name="enter_correct_cvv_error_msg">Please enter a correct CVV</string>
+    <string name="enter_correct_phone_error_msg">Please enter a correct phone number</string>
+    <string name="enter_corect_expiration_date_error_msg">Please enter a correct Expiration Date MMYYYY</string>
+    <string name="enter_correct_cb_error_msg">Please enter a correct Credit card number</string>
+    <string name="pasword_not_matching_error_msg">Password doesn\'t matching !</string>
+    <string name="sign_up_success_msg">Succes Sign Up</string>
 </resources>

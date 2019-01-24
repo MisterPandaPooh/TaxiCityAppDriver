@@ -47,33 +47,35 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
         Context context = viewGroup.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.cell_trip, viewGroup, false);
-
-        //InitWaitingTripViewHolder
+        //Init WaitingTripViewHolder
         WaitingTripViewHolder.setContext(context);
         return new WaitingTripViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final WaitingTripViewHolder viewHolder, final int position) {
+        //Get current trip.
         viewHolder.setTrip(items.get(position));
 
-        //Set the Fold Listener (Maybe change position)
+        //Set the Fold Listener
         final FoldingCell finalCell = (FoldingCell) viewHolder.itemView;
         viewHolder.setFoldListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //If busy driver disable click Listener [UnFold cell]
                 if (!WaitingTripAdapter.isBusyDriver()) {
                     finalCell.post(new Runnable() {
                         @Override
                         public void run() {
                             finalCell.toggle(false);
                         }
-                    });
+                    }); // UnFolding/Expand the item.
                 }
 
             }
         });
 
+        //CallBack to Delete item from the Recycler view, when trip is ended.
         viewHolder.setOnEndTripSimpleCallBack(new SimpleCallBack() {
             @Override
             public void execute() {
@@ -83,11 +85,17 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
                 notifyItemRangeChanged(position, items.size());
             }
         });
+
+        //Init the viewHolder (BindView, setListeners etc...)
         viewHolder.init();
 
 
     }
 
+
+    /* ******************* ******************* ******************* */
+    /* All these 3 functions was overrated to keep stable id's on recyclerView */
+    /* ******************* ******************* ******************* */
 
     @Override
     public int getItemCount() {
