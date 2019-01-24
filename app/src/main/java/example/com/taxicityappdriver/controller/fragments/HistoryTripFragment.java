@@ -38,12 +38,15 @@ public class HistoryTripFragment extends Fragment {
     public final static BackEnd db = BackEndFactory.getInstance();
     private final String TAG = "WaitingTripsFragment";
 
-    private List<Trip> items; //Notified list of trip items.
+    //Notified list of trip items.
+    private List<Trip> items;
 
+    //View fields
     private RecyclerView recyclerView; //RecyclerView instance.
     private SwipeRefreshLayout swipeRefreshLayout;//SwipeRefreshLayout instance.
     private FloatingActionButton fab; //FloatingActionButton instance to activate filters.
 
+    //Saving state filter;
     private boolean filterBeforeDateSwitchState;
     private boolean filterByPriceSwitchState;
     private Date dateFilterValue;
@@ -126,13 +129,18 @@ public class HistoryTripFragment extends Fragment {
 
             @Override
             public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.error_getting_trip_list) + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
 
     }
 
 
+    /**
+     * Apply filter before the date
+     *
+     * @param date The date to filter
+     */
     private void applyFilterBeforeDate(Date date) {
 
         //Reset
@@ -163,12 +171,17 @@ public class HistoryTripFragment extends Fragment {
 
             @Override
             public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.error_getting_trip_list) + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
 
     }
 
+    /**
+     * Apply filter by trip price.
+     *
+     * @param price
+     */
 
     private void applyFilterByPrice(int price) {
         //Reset
@@ -199,7 +212,7 @@ public class HistoryTripFragment extends Fragment {
 
             @Override
             public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.error_getting_trip_list) + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -211,9 +224,12 @@ public class HistoryTripFragment extends Fragment {
     }
 
 
+    /**
+     * Init Filter Dialog to filter the view
+     */
     private void showFilterDialog() {
         if (WaitingTripAdapter.isBusyDriver()) {
-            Toast.makeText(getContext(), "You can't apply a filter in current trip !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -223,6 +239,7 @@ public class HistoryTripFragment extends Fragment {
         View dialogView = inflater.inflate(R.layout.dialog_filter_history_trip, null);
 
 
+        //Bind View
         final Switch filterBeforeDate = dialogView.findViewById(R.id.filter_by_date_switch);
         final Switch filterByPrice = dialogView.findViewById(R.id.filter_by_price_switch);
         final FluidSlider fluidSliderPrice = dialogView.findViewById(R.id.price_fluid_slider);
@@ -283,7 +300,7 @@ public class HistoryTripFragment extends Fragment {
         dialogBuilder.setView(dialogView);
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.setTitle("Filters");
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Apply Filter", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.apply_filter_btn_dialog), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (filterByPriceSwitchState) {
@@ -299,7 +316,7 @@ public class HistoryTripFragment extends Fragment {
 
             }
         });
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Dismiss", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.dismiss_btn_dialog_filter), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 

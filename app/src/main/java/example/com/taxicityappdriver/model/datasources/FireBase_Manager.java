@@ -38,27 +38,32 @@ import example.com.taxicityappdriver.model.interfaces.CheckBooleanMethodConditio
 import example.com.taxicityappdriver.model.interfaces.NotifyDataChange;
 
 public class FireBase_Manager implements BackEnd<String> {
+
+    //Database References
     private static FirebaseDatabase db = FirebaseDatabase.getInstance();
     private static FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static DatabaseReference refTrips = db.getReference("Trips");
     private static DatabaseReference refDriver = db.getReference("Drivers");
     private static StorageReference refStorageProfilePictures = FirebaseStorage.getInstance().getReference("ProfilePictures");
-    private final String TAG = "firebaseManager";
-    private static Driver currentDriver;
-    private static Trip currentTrip;
+
+    //Database Change event listenners
     private static ChildEventListener tripRefChildEventListener;
-    private static ChildEventListener driverRefChildEventListener;
     private static ChildEventListener currentDriverChildEventListener;
 
+    //Current Driver Signed
+    private static Driver currentDriver;
 
+    //Driver List
     private static ArrayList<Driver> drivers = new ArrayList<>();
+    //Trips List
     private static ArrayList<Trip> Trips = new ArrayList<>();
+
+    private final String TAG = "firebaseManager";
 
 
     public void addTrip(final Trip trip, final ActionCallBack<String> action) {
         String idTrip = trip.getKey();
-
-
+        
         //Keep the same key when updating
         if (idTrip == null)
             idTrip = refTrips.push().getKey();
@@ -116,32 +121,6 @@ public class FireBase_Manager implements BackEnd<String> {
         });
 
     }
-
-
-    /*public void updateTrip(final Trip toUpdate, final ActionCallBack<String> action) {
-        final String key = toUpdate.getKey();
-
-
-        Log.e(TAG, "Update Started");
-        Log.i(TAG, "updateTrip - key :" + key);
-        Log.i(TAG, "updateTrip: - Destination :" + toUpdate.getDestinationAddress());
-        removeTrip(key, new ActionCallBack<String>() {
-            @Override
-            public void onSuccess(String obj) {
-                addTrip(toUpdate, action);
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                action.onFailure(exception);
-            }
-
-            @Override
-            public void onProgress(String status, double percent) {
-                action.onProgress(status, percent);
-            }
-        });
-    }*/
 
     public void updateTrip(final Trip toUpdate, final ActionCallBack<String> action) {
         Log.e(TAG, "Update Started");

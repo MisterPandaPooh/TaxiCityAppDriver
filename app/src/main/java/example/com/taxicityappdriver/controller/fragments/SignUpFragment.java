@@ -188,6 +188,9 @@ public class SignUpFragment extends Fragment {
         driver.setBusy(false);
         driver.setTotalSumOfTrips(0);
         driver.setTotalTripsCounter(0);
+        //TODO
+        //driver.setCurrentLocationLat();
+        //driver.setCurrentLocationLong();
         return driver;
     }
 

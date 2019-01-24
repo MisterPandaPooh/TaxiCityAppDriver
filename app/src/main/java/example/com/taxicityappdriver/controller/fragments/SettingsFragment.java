@@ -36,15 +36,18 @@ import static android.app.Activity.RESULT_OK;
 public class SettingsFragment extends Fragment {
 
 
-    private TextView totalTripTextView;
-    private TextView totalPricedTextView;
+    //View Fields
+
     private EditText newPasswordEditText;
     private EditText confirmNewPasswordEditText;
+    private TextView totalTripTextView;
+    private TextView totalPricedTextView;
     private Button submitButton;
     private TextView nameTextView;
     private CircleImageView avatarImageView;
+
     private static final BackEnd db = BackEndFactory.getInstance();
-    public static final int PICK_IMAGE = 1;
+    public static final int PICK_IMAGE = 1; //Image Picked Code ( for change profile picture)
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -66,6 +69,8 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //Bind View
         totalPricedTextView = view.findViewById(R.id.total_price_txt_view);
         totalTripTextView = view.findViewById(R.id.total_trip_txt_view);
         newPasswordEditText = view.findViewById(R.id.new_password);
@@ -75,6 +80,7 @@ public class SettingsFragment extends Fragment {
         avatarImageView = view.findViewById(R.id.profile_image);
 
 
+        //Init Listenner
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,6 +96,8 @@ public class SettingsFragment extends Fragment {
         avatarImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //New Intent to select new profile picture.
                 Intent getIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 getIntent.setType("image/*");
 
@@ -103,36 +111,43 @@ public class SettingsFragment extends Fragment {
             }
         });
 
+        //UI setText
         totalPricedTextView.setText(String.valueOf(db.getCurrentDriver().getTotalSumOfTrips()) + " $");
         totalTripTextView.setText(String.valueOf(db.getCurrentDriver().getTotalTripsCounter()) + " trip(s)");
+
         nameTextView.setText(db.getCurrentDriver().getFirstName() + " " + db.getCurrentDriver().getLastName() + " - " + db.getCurrentDriver().getIdNumber());
 
         avatarImageView.post(new Runnable() {
             @Override
             public void run() {
                 if (db.getUserProfilePicture() == null) {
-                    //TODO
+                    //TODO Restore Current user profile picture
                 }
             }
         });
 
     }
 
+    /**
+     * Check Valid Form
+     *
+     * @return true if valid
+     */
     private boolean isValidForm() {
         if (newPasswordEditText == null || confirmNewPasswordEditText == null) {
-            Toast.makeText(getContext(), "Please fill all required fields.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.please_fill_all_required_error_msg), Toast.LENGTH_LONG).show();
             return false;
         }
         if (TextUtils.isEmpty(newPasswordEditText.getText()) || TextUtils.isEmpty(confirmNewPasswordEditText.getText())) {
-            Toast.makeText(getContext(), "Please fill all required fields.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.please_fill_all_required_error_msg), Toast.LENGTH_LONG).show();
             return false;
         }
         if (newPasswordEditText.getText().toString().length() < 6) {
-            Toast.makeText(getContext(), "The password must have at least 6 chars.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.min_6_password_char_error_msg), Toast.LENGTH_LONG).show();
             return false;
         }
         if (!newPasswordEditText.getText().toString().equals(confirmNewPasswordEditText.getText().toString())) {
-            Toast.makeText(getContext(), "Password confirmation not matching !", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.pasword_not_matching_error_msg), Toast.LENGTH_LONG).show();
             return false;
         }
 
@@ -140,18 +155,23 @@ public class SettingsFragment extends Fragment {
 
     }
 
+    /**
+     * Updating user password
+     */
     private void updatePassword() {
+        //Check valid form
         if (!isValidForm())
             return;
+
         db.changeUserPassword(newPasswordEditText.getText().toString(), new ActionCallBack() {
             @Override
             public void onSuccess(Object obj) {
-                Toast.makeText(getContext(), "Password Changed !", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.password_changed_success_msg), Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "ERROR : " + exception.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
 
             }
 
@@ -164,12 +184,18 @@ public class SettingsFragment extends Fragment {
     }
 
 
+    /**
+     * Confirmation Dialog
+     * This dialog execute a CallBack function (Void, and no Args).
+     *
+     * @param function
+     */
     private void showConfirmDialog(final SimpleCallBack function) {
         AlertDialog show = new AlertDialog.Builder(getContext())
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Confirm Action")
-                .setMessage("Are you sure you want to do this ?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setTitle(getString(R.string.confirm_action_dialog_title))
+                .setMessage(getString(R.string.are_you_sure_msg_dialog_confirm))
+                .setPositiveButton(getString(R.string.yes_btn), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (function != null) {
@@ -178,7 +204,7 @@ public class SettingsFragment extends Fragment {
                     }
 
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.no_btn), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -187,6 +213,13 @@ public class SettingsFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Update Profil picture on activity result to select image.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && null != data) {
@@ -195,7 +228,7 @@ public class SettingsFragment extends Fragment {
             db.updateProfilePicture(selectedImage, new ActionCallBack() {
                 @Override
                 public void onSuccess(Object obj) {
-                    Toast.makeText(getContext(), "Photo Changed !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getString(R.string.photo_changed_success_msg), Toast.LENGTH_LONG).show();
                 }
 
                 @Override

@@ -2,6 +2,9 @@ package example.com.taxicityappdriver.model.backend;
 
 import example.com.taxicityappdriver.model.datasources.FireBase_Manager;
 
+/**
+ * Factory class of the BackEnd
+ */
 public class BackEndFactory {
 
     private static BackEnd instance = null;

@@ -19,7 +19,7 @@
             <!-- Head of Fragment with Logo and Title -->
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="10dp">
 
@@ -39,12 +39,12 @@
 
                     <TextView
                         style="@style/titleFormStyle"
-                        android:layout_marginRight="6dp"
+                        android:layout_marginEnd="6dp"
                         android:text="@string/welcome" />
 
                     <TextView
                         style="@style/titleFormStyle"
-                        android:layout_marginRight="6dp"
+                        android:layout_marginEnd="6dp"
                         android:text="@string/back"
                         android:textColor="@color/colorTaxiYellow" />
 

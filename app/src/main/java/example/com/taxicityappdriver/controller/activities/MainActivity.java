@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void checkAuthentication() {
         if (!db.isSigned()) {
             Intent intent = new Intent(this, AuthActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); //reset backstack
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); //reset backStack
             startActivity(intent);
             finish();
         }

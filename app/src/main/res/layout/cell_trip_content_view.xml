@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container_cell"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -77,7 +78,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/colorTaxiYellow"
-                    android:text="Destination address :"
+                    android:text="@string/destination_address_lbl"
                     android:textAlignment="center" />
 
                 <TextView
@@ -87,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:drawablePadding="5dp"
-                    android:text="1 destination street to be a poto"
+                    android:text="@string/destination_adresse_hint"
                     android:textSize="13sp" />
 
 
@@ -109,21 +110,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_margin="3dp"
-                            android:contentDescription="TODO"
+                            android:contentDescription="@string/default_description"
                             android:src="@drawable/ic_taxihdpi" />
 
                         <TextView
                             android:id="@+id/distance_from_you_lbl"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" Distance from you"
+                            android:text="@string/distance_from_you_lbl"
                             android:textSize="9sp" />
 
                         <TextView
                             android:id="@+id/distance_from_you"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" 1 km"
+                            android:text="@string/distance_from_yo_hint"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -151,20 +152,20 @@
                             android:layout_width="wrap_content"
                             android:layout_height="40dp"
                             android:layout_margin="3dp"
-                            android:contentDescription="taxi_ic"
+                            android:contentDescription="@string/default_description"
                             android:src="@drawable/ic_triphdpi" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" Trip distance"
+                            android:text="@string/trip_distance_lbl"
                             android:textSize="9sp" />
 
                         <TextView
                             android:id="@+id/trip_distance"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" 5.4 km"
+                            android:text="@string/distance_from_yo_hint"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -198,14 +199,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" DateTime"
+                            android:text="@string/start_date_lbl"
                             android:textSize="9sp" />
 
                         <TextView
                             android:id="@+id/datetime_trip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" 21/08/2019 19:30"
+                            android:text="@string/start_date_hint"
                             android:textSize="12sp"
                             android:textStyle="bold" />
 
@@ -231,7 +232,8 @@
                         android:adjustViewBounds="true"
                         android:background="#FEF1E5"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/person_1_hdpi" />
+                        android:src="@drawable/person_1_hdpi"
+                        android:contentDescription="TODO" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -242,7 +244,7 @@
                             style="@style/labelTripItem"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text=" Add Customer Contact "
+                            android:text="@string/add_customer_contact_lbl"
                             android:textAlignment="center" />
 
                         <TextView
@@ -251,7 +253,7 @@
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:drawableRight="@drawable/ic_chevron_right_black_24dp"
-                            android:text="Netanel COHEN SOLAL"
+                            android:text="@string/add_customer_contact_hint"
                             android:textAlignment="center"
                             android:textColor="@color/colorTaxiBlack"
                             android:textSize="20sp" />
@@ -280,8 +282,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/holo_blue_dark"
-                android:drawableLeft="@drawable/ic_sms"
-                android:text="Sms" />
+                android:drawableStart="@drawable/ic_sms"
+                android:text="@string/sms_btn_lbl"
+                tools:ignore="UnusedAttribute" />
 
             <Button
                 android:id="@+id/call_btn"
@@ -289,8 +292,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@color/colorTaxiYellow"
-                android:drawableLeft="@drawable/ic_phone"
-                android:text="Phone" />
+                android:drawableStart="@drawable/ic_phone"
+                android:text="@string/phone_btn_lbl"
+                tools:ignore="UnusedAttribute" />
 
 
             <Button
@@ -299,8 +303,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:backgroundTint="@android:color/holo_red_light"
-                android:drawableLeft="@drawable/ic_mail"
-                android:text="Email" />
+                android:drawableStart="@drawable/ic_mail"
+                android:text="@string/email_btn_lbl"
+                tools:ignore="UnusedAttribute" />
 
 
         </LinearLayout>
@@ -313,11 +318,10 @@
             android:backgroundTint="@color/colorPrimary"
             android:paddingTop="20dp"
             android:paddingBottom="20dp"
-            android:text="Request trip !"
+            android:text="@string/request_trip_btn_lbl"
             android:textColor="#fff"
             android:textStyle="bold"
-
-            />
+            tools:ignore="UnusedAttribute" />
 
 
         <View
@@ -345,9 +349,10 @@
                 android:paddingTop="15dp"
 
                 android:paddingBottom="15dp"
-                android:text="cancel"
+                android:text="@string/cancel_btn_dialog"
                 android:textColor="#fff"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="UnusedAttribute" />
 
             <Button
                 android:id="@+id/end_trip_btn"
@@ -358,10 +363,11 @@
                 android:paddingTop="15dp"
 
                 android:paddingBottom="15dp"
-                android:text="End trip"
+                android:text="@string/end_trip_btn_lbl"
                 android:textColor="#fff"
                 android:textStyle="bold"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:ignore="UnusedAttribute" />
 
 
         </LinearLayout>

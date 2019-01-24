@@ -1,11 +1,17 @@
 package example.com.taxicityappdriver.model.helpers;
 
+
+/**
+ * Set just One time the field
+ *
+ * @param <T> Type of the Field.
+ */
 public class ReadOnly<T> {
 
     private boolean isSetted;
     private T field;
 
-    public ReadOnly(){
+    public ReadOnly() {
         isSetted = false;
         field = null;
     }
@@ -16,7 +22,7 @@ public class ReadOnly<T> {
     }
 
     public void set(T field) {
-        if(isSetted)
+        if (isSetted)
             return;
         this.field = field;
         isSetted = true;

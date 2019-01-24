@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:textSize="17sp"
             android:textStyle="bold"
-            android:text="Netanel Cohen Solal"/>
+            android:text="@string/header_driver_infos_hint"/>
 
     </LinearLayout>
 

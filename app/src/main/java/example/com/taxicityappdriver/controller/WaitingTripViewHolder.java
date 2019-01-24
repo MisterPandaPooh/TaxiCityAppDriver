@@ -51,7 +51,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     private static String busyKey = null;
     private static final SimpleDateFormat simpleDate = new SimpleDateFormat("dd/MM/yy - HH:mm"); //Format Date for UI
     private static final String TAG = "TripItemViewAdapter";//Tag for debug
-    private static Context context;
+    protected static Context context;
 
     private boolean isInit; //Singeton check if inited before
     private boolean contactAdded; //Singeton check if contact added  before
@@ -263,7 +263,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
                 //Prevent Contact the customer before requesting the trip
                 if (!wasRequestByYou()) {
-                    Toast.makeText(context, "You need to Request this trip before contact the customer !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -285,7 +285,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
                 //TODO tester avec un vrai tel
                 if (!wasRequestByYou()) {
-                    Toast.makeText(context, "You need to Request this trip before contact the customer !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -295,7 +295,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                 SmsManager smsManager = SmsManager.getDefault();
                 smsManager.sendTextMessage(trip.getCustomerPhone(), driver.getPhoneNumber(), smsBody, null, null);
 
-                Toast.makeText(context, "SMS sent !", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.sms_sent_success_msg), Toast.LENGTH_SHORT).show();
 
             }
         };
@@ -311,7 +311,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 if (!wasRequestByYou()) {
-                    Toast.makeText(context, "You need to Request this trip before contact the customer !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_LONG).show();
                     return;
                 }
                 //Intent for a new call
@@ -405,7 +405,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                     });
 
                 } else {
-                    Toast.makeText(context, "Your are Busy !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -424,7 +424,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
             @Override
             public void onClick(View v) {
                 if (!wasRequestByYou()) {
-                    Toast.makeText(context, "You need to Request this trip before contact the customer !", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -436,12 +436,12 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");
                 i.putExtra(Intent.EXTRA_EMAIL, new String[]{trip.getCustomerEmail()});
-                i.putExtra(Intent.EXTRA_SUBJECT, "TaxiCity : Your trip has started !");
+                i.putExtra(Intent.EXTRA_SUBJECT, R.string.mail_title_confirmation_trip);
                 i.putExtra(Intent.EXTRA_TEXT, emailBody);
                 try {
                     context.startActivity(Intent.createChooser(i, "Send mail..."));
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(context, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.error_msg_email), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -449,6 +449,11 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     }
 
 
+    /**
+     * Listener on Cancel clicked button
+     *
+     * @return
+     */
     protected View.OnClickListener onCancelClickListener() {
         return new View.OnClickListener() {
             @Override
@@ -465,6 +470,11 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
         };
     }
 
+    /**
+     * Listener on End clicked button
+     *
+     * @return
+     */
     protected View.OnClickListener onEndTripClickListener() {
         return new View.OnClickListener() {
             @Override
@@ -481,21 +491,26 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     }
 
 
+    /**
+     * Ended Trip function
+     */
     private void endTrip() {
         if (!wasRequestByYou())
             return;
 
+        //Change Trip State
         trip.setEndingHour(String.valueOf(System.currentTimeMillis()));
         trip.setStatusAsEnum(Trip.TripStatus.FINISHED);
 
+        //Update Trip
         db.updateTrip(trip, new ActionCallBack() {
             @Override
             public void onSuccess(Object obj) {
                 AlertDialog show = new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Trip Finished !")
+                        .setTitle(context.getString(R.string.title_trip_finished_dialog))
                         .setMessage("TOTAL COST : " + TripHelper.calculatePrice(tripDistanceInKm) + " $")
-                        .setPositiveButton("Fine !", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(context.getString(R.string.yes_btn_finish_dialog), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
@@ -504,12 +519,14 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                         })
                         .show();
 
+                //Reset busy key
                 busyKey = null;
 
+                //End Callback (Delete Item)
                 if (onEndTripSimpleCallBack != null)
                     onEndTripSimpleCallBack.execute();
 
-                //Not needed
+                //Update Driver
                 Driver driver = db.getCurrentDriver();
                 driver.setBusy(false);
                 driver.setTotalTripsCounter(driver.getTotalTripsCounter() + 1);
@@ -551,6 +568,9 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     }
 
 
+    /**
+     * Cancel Trip function
+     */
     private void cancelTrip() {
         if (!wasRequestByYou())
             return;
@@ -618,12 +638,18 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     }
 
 
+    /**
+     * Confirmation Dialog
+     * This dialog execute a CallBack function (Void, and no Args).
+     *
+     * @param function
+     */
     private void showConfirmDialog(final SimpleCallBack function) {
         AlertDialog show = new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Confirm Action")
-                .setMessage("Are you sure you want to do this ?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setTitle(context.getString(R.string.confirm_action_dialog_title))
+                .setMessage(context.getString(R.string.are_you_sure_msg_dialog_confirm))
+                .setPositiveButton(context.getString(R.string.yes_btn), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (function != null) {
@@ -632,7 +658,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                     }
 
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton(context.getString(R.string.no_btn), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -646,7 +672,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
      * Initialisation and build of Content Provider to add the customer to driver's contact list.
      */
     private void AddContact() {
-        if (contactAdded) //Preventdouble contact (singleton)
+        if (contactAdded) //Prevent double contact (singleton)
             return;
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
@@ -695,16 +721,18 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
             e.printStackTrace();
         }
 
-        Toast.makeText(context, "Contact added to you phone !", Toast.LENGTH_LONG).show();
+        Toast.makeText(context, context.getString(R.string.success_contact_added_msg), Toast.LENGTH_LONG).show();
 
         contactAdded = true;
 
     }
 
-    public SimpleCallBack getOnEndTripSimpleCallBack() {
-        return onEndTripSimpleCallBack;
-    }
 
+    /**
+     * Setter of End trip callBack
+     *
+     * @param onEndTripSimpleCallBack
+     */
     public void setOnEndTripSimpleCallBack(SimpleCallBack onEndTripSimpleCallBack) {
         this.onEndTripSimpleCallBack = onEndTripSimpleCallBack;
     }

@@ -28,16 +28,15 @@ public class Trip {
     @Exclude
     private String key;
 
-    private String startingHour; //Not firebase
+    private String startingHour; //Start Hours of the Trip.
 
-    private String endingHour; //Not Firebase
+    private String endingHour;  //End Hours of the Trip.
 
     private String customerName;
 
     private String customerPhone;
 
     private String customerEmail;
-
 
     private TripStatus status;
 
@@ -56,6 +55,8 @@ public class Trip {
     private String destinationCity;
 
     private String driverEmail;
+
+
 
     public String getKey() {
         return key;
@@ -169,7 +170,6 @@ public class Trip {
     }
 
 
-    //TODO Rajouter city
 
     @Exclude
     public TripStatus getStatusAsEnum() {
@@ -181,7 +181,7 @@ public class Trip {
         this.status = status;
     }
 
-    //Include enum in firebase
+
     public String getStatus() {
         if (status == null) {
             return null;

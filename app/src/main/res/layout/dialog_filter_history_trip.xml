@@ -18,7 +18,7 @@
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="Filtering By Date:" />
+            android:text="@string/filtering_by_date_lbl" />
 
         <android.widget.Switch
             android:id="@+id/filter_by_date_switch"
@@ -42,7 +42,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Before the:" />
+            android:text="@string/before_the_lbl_dialog" />
 
         <DatePicker
             android:id="@+id/filter_date_picker"
@@ -52,7 +52,8 @@
             android:calendarViewShown="false"
             android:datePickerMode="spinner"
             android:scaleX="0.7"
-            android:scaleY="0.7" />
+            android:scaleY="0.7"
+            tools:ignore="UnusedAttribute" />
     </LinearLayout>
 
     <LinearLayout
@@ -65,7 +66,7 @@
             style="@style/labelStyleForm"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:text="Filtering By MIN Price :" />
+            android:text="@string/filtering_by_price" />
 
         <android.widget.Switch
             android:id="@+id/filter_by_price_switch"

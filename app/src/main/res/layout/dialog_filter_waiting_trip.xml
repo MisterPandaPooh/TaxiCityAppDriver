@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -19,7 +18,7 @@
             android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:text="Filtering By City :" />
+            android:text="@string/filtering_by_city_lbl" />
 
         <android.widget.Switch
             android:id="@+id/filter_by_city_switch"
@@ -30,29 +29,28 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/filter_by_city_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:visibility="gone"
-        android:id="@+id/filter_by_city_linear_layout"
-        >
+        android:visibility="gone">
+
         <TextView
-            android:layout_width="130dp"
             style="@style/labelStyleForm"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:text="City Name:"
-            />
+            android:text="@string/city_name_dialog_lbl_filter" />
+
         <EditText
-            android:layout_margin="5dp"
+            android:id="@+id/filter_by_city_edit_text"
 
             style="@style/inputStyle"
             android:layout_width="wrap_content"
-            android:textAlignment="center"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
             android:minWidth="100dp"
-            android:id="@+id/filter_by_city_edit_text"
-            />
+            android:textAlignment="center" />
     </LinearLayout>
 
     <LinearLayout
@@ -60,17 +58,19 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal">
+
         <TextView
-            android:layout_width="220dp"
             style="@style/labelStyleForm"
+            android:layout_width="220dp"
             android:layout_height="wrap_content"
-            android:text="Filtering By Distance (km) :"/>
+            android:text="@string/filtering_by_distance_km" />
+
         <android.widget.Switch
+            android:id="@+id/filter_by_distance_switch"
             android:layout_width="wrap_content"
-            android:textAlignment="center"
             android:layout_height="wrap_content"
             android:switchMinWidth="100dp"
-            android:id="@+id/filter_by_distance_switch"/>
+            android:textAlignment="center" />
     </LinearLayout>
 
     <com.ramotion.fluidslider.FluidSlider
@@ -79,11 +79,11 @@
         android:layout_height="match_parent"
         android:layout_margin="0dp"
         android:padding="0dp"
+        android:visibility="gone"
         app:bar_color="@color/colorTaxiYellow"
+        app:end_text="200"
         app:initial_position="0.2"
         app:size="small"
-        app:end_text="200"
-        app:start_text="5"
-        android:visibility="gone" />
+        app:start_text="5" />
 
 </LinearLayout>

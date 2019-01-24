@@ -11,7 +11,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <LinearLayout
@@ -35,7 +35,7 @@
                     android:id="@+id/name_header"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Netanel Cohen Solal - 1444669"
+                    android:text="@string/header_driver_infos_hint"
                     android:textColor="#fff"
                     android:textSize="17sp"
                     android:textStyle="bold" />
@@ -44,8 +44,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:orientation="horizontal">
 
@@ -53,18 +53,19 @@
                     style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_local_taxi_black_24dp"
+                    android:drawableStart="@drawable/ic_local_taxi_black_24dp"
                     android:drawablePadding="5dp"
                     android:drawableTint="@color/colorTaxiBlack"
-                    android:text="Total Trips :"
-                    android:textStyle="normal" />
+                    android:text="@string/total_trips_lbl"
+                    android:textStyle="normal"
+                    tools:ignore="UnusedAttribute" />
 
                 <TextView
-                    style="@style/labelStyleForm"
                     android:id="@+id/total_trip_txt_view"
+                    style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" 130 trip(s)" />
+                    android:text="@string/total_trip_hint" />
 
             </LinearLayout>
 
@@ -81,19 +82,19 @@
                     style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Priced Trips :"
-                    android:drawableLeft="@drawable/ic_local_atm_black_24dp"
+                    android:drawableStart="@drawable/ic_local_atm_black_24dp"
                     android:drawablePadding="5dp"
                     android:drawableTint="@color/colorTaxiBlack"
-                    android:textStyle="normal" />
+                    android:text="@string/total_priced_trips_lbl"
+                    android:textStyle="normal"
+                    tools:ignore="UnusedAttribute" />
 
                 <TextView
                     android:id="@+id/total_price_txt_view"
                     style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" 13000 $" />
-
+                    android:text="@string/total_priced_trips_hint" />
 
 
             </LinearLayout>
@@ -109,16 +110,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
 
+                android:layout_marginTop="0dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginTop="0dp"
                 android:orientation="vertical">
 
                 <TextView
                     style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Change Password"
+                    android:text="@string/change_password_lbl"
                     android:textSize="25sp" />
 
                 <View
@@ -133,7 +134,7 @@
                     style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" New Password" />
+                    android:text="@string/new_password_lbl" />
 
                 <EditText
                     android:id="@+id/new_password"
@@ -149,7 +150,7 @@
                     style="@style/labelStyleForm"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=" New Password Confirm" />
+                    android:text="@string/new_password_confirm_lbl" />
 
                 <EditText
 
@@ -168,9 +169,10 @@
                     android:layout_marginTop="10dp"
                     android:backgroundTint="@color/colorTaxiBlack"
                     android:gravity="bottom"
-                    android:text="Change password"
+                    android:text="@string/change_password_lbl"
                     android:textAlignment="center"
-                    android:textColor="#fff" />
+                    android:textColor="#fff"
+                    tools:ignore="UnusedAttribute" />
 
 
             </LinearLayout>

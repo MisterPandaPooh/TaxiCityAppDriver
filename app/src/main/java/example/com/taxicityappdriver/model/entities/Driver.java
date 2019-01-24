@@ -7,24 +7,21 @@ import java.util.Date;
 public class Driver {
 
     @Exclude
-    protected String email;
+    protected String email; //KEY WILL BE EMAIL
 
     protected long idNumber;
     protected String firstName;
     protected String lastName;
-    protected String phoneNumber; //long ?
+    protected String phoneNumber;
     protected long creditCardNumber;
     protected long cVV;
     protected String expireDateCreditCard;
-    protected String createdDate;
+    protected String createdDate; // Date when the driver is singUp.
     protected double currentLocationLat;
     protected double currentLocationLong;
     protected boolean isBusy;
     protected int totalTripsCounter;
-    protected double totalSumOfTrips;
-
-
-//KEY WILL BE EMAIL
+    protected double totalSumOfTrips; //Total cost of all the driver trips
 
 
     @Exclude

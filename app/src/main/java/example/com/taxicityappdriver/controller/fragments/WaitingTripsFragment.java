@@ -49,6 +49,7 @@ public class WaitingTripsFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;//SwipeRefreshLayout instance.
     private FloatingActionButton fab; //FloatingActionButton instance to activate filters.
 
+    //Save state of filters
     private static boolean switchByDistanceState;
     private static boolean switchByCityState;
     private static int distanceSavedState;
@@ -100,7 +101,7 @@ public class WaitingTripsFragment extends Fragment {
         if (switchByDistanceState)
             applyFilterByDistance(distanceSavedState);
         else if (switchByCityState)
-            applyFilterByCity("Jeru");
+            applyFilterByCity(citySavedInstance);
         else
             initRecyclerView();
 
@@ -138,7 +139,7 @@ public class WaitingTripsFragment extends Fragment {
 
             @Override
             public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.error_getting_trip_list) + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -151,6 +152,11 @@ public class WaitingTripsFragment extends Fragment {
         super.onDestroy();
     }
 
+    /**
+     * Apply filter by Distance (Change notify function)
+     *
+     * @param distance the maximum distance (in km)
+     */
     public void applyFilterByDistance(int distance) {
 
         //Reset
@@ -181,12 +187,18 @@ public class WaitingTripsFragment extends Fragment {
 
             @Override
             public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.error_getting_trip_list) + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
 
     }
 
+    /**
+     * Apply filter by City Name (Change notify function)
+     * (Case sensitive)
+     *
+     * @param city The city to find.
+     */
     public void applyFilterByCity(final String city) {
         //Reset
         recyclerView.setAdapter(null);
@@ -216,7 +228,7 @@ public class WaitingTripsFragment extends Fragment {
 
             @Override
             public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), getString(R.string.error_getting_trip_list) + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -224,9 +236,13 @@ public class WaitingTripsFragment extends Fragment {
     }
 
 
+    /**
+     * Init the Filter dialog View
+     */
     private void showFilterDialog() {
+        //Prevent filtering busy driver
         if (WaitingTripAdapter.isBusyDriver()) {
-            Toast.makeText(getContext(), "You can't apply a filter in current trip !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.busy_driver_not_quit_msg), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -236,6 +252,7 @@ public class WaitingTripsFragment extends Fragment {
         View dialogView = inflater.inflate(R.layout.dialog_filter_waiting_trip, null);
 
 
+        //Bind View
         final Switch filterByCity = dialogView.findViewById(R.id.filter_by_city_switch);
         final Switch filterByDistance = dialogView.findViewById(R.id.filter_by_distance_switch);
         final FluidSlider fluidSliderDistance = dialogView.findViewById(R.id.distance_fluid_slider);
@@ -245,13 +262,14 @@ public class WaitingTripsFragment extends Fragment {
         final int maxDistance = 600;
         final int totalDisatance = maxDistance - minDistance;
 
+        //Init Listeners
         fluidSliderDistance.setStartText(String.valueOf(minDistance));
         fluidSliderDistance.setEndText(String.valueOf(maxDistance));
         fluidSliderDistance.setPositionListener(new Function1<Float, Unit>() {
             @Override
             public Unit invoke(Float pos) {
                 final String value = String.valueOf((int) (minDistance + totalDisatance * pos));
-                fluidSliderDistance.setBubbleText(value);
+                fluidSliderDistance.setBubbleText(value); //Change value of the fluie slider
                 return Unit.INSTANCE;
             }
         });
@@ -261,6 +279,7 @@ public class WaitingTripsFragment extends Fragment {
         if (switchByDistanceState) {
             filterByDistance.setChecked(true);
             fluidSliderDistance.setVisibility(View.VISIBLE);
+            fluidSliderDistance.setPosition(distanceSavedState);
         } else if (switchByCityState) {
             filterByCity.setChecked(true);
             linearLayourCity.setVisibility(View.VISIBLE);
@@ -268,12 +287,14 @@ public class WaitingTripsFragment extends Fragment {
                 cityNameEditText.setText(citySavedInstance);
         }
 
+        //Apply just One filter at time
         filterByDistance.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 switchByDistanceState = isChecked;
                 if (isChecked) {
                     fluidSliderDistance.setVisibility(View.VISIBLE);
+                    fluidSliderDistance.setPosition(distanceSavedState);
                     filterByCity.setChecked(false);
                 } else
                     fluidSliderDistance.setVisibility(View.GONE);
@@ -296,10 +317,11 @@ public class WaitingTripsFragment extends Fragment {
         //Init UI View of the Dialog
         dialogBuilder.setView(dialogView);
         AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.setTitle("Filters");
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Apply", new DialogInterface.OnClickListener() {
+        alertDialog.setTitle(getString(R.string.filter_title_dialog));
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.apply_filter_btn_dialog), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                // Apply filter functions
                 if (switchByDistanceState) {
                     distanceSavedState = (int) (minDistance + totalDisatance * fluidSliderDistance.getPosition());
                     applyFilterByDistance(distanceSavedState);
@@ -315,7 +337,7 @@ public class WaitingTripsFragment extends Fragment {
 
             }
         });
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Dismiss", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, getString(R.string.dismiss_btn_dialog_filter), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
