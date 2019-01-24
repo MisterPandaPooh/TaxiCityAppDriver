@@ -26,10 +26,7 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
-
         requestAllPermissions();
-
-
 
         db.signOut();
         if (db.isSigned())

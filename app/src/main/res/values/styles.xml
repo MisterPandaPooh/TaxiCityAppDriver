@@ -14,6 +14,7 @@
     <style name="ToolBarStyle" parent="AppTheme">
         <item name="android:textColorPrimary">@color/colorTaxiBlack</item>
         <item name="colorControlNormal">@color/colorTaxiBlack</item>
+        <item name="android:iconTint" tools:targetApi="o">@color/colorPrimary</item>
     </style>
 
 

@@ -1,6 +1,7 @@
 package example.com.taxicityappdriver.controller.activities;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.design.widget.NavigationView;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,8 +13,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import example.com.taxicityappdriver.services.DriverService;
+import example.com.taxicityappdriver.services.MyBroadcastReceiver;
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.controller.WaitingTripsFragment;
+import example.com.taxicityappdriver.controller.fragments.HistoryTripFragment;
+import example.com.taxicityappdriver.controller.fragments.WaitingTripsFragment;
 import example.com.taxicityappdriver.services.ClosingService;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private static BackEnd db = BackEndFactory.getInstance();
     private WaitingTripsFragment waitingTripsFragment;
+    private HistoryTripFragment historyTripFragment;
     private final String TAG = "mainActivity";
 
     private final int FRAGMENT_WAITING_TRIPS = 0;
@@ -40,7 +45,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         checkAuthentication();
+
+        registerReceiver(
+                new MyBroadcastReceiver(),
+                new IntentFilter("New order"));
+
+        startService(new Intent(getBaseContext(), DriverService.class));
 
         // 6 - Configure all views
 
@@ -51,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         this.configureNavigationView();
 
         startService(new Intent(getBaseContext(), ClosingService.class));
+
     }
 
     @Override
@@ -77,11 +90,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (id) {
             case R.id.activity_main_drawer_last_trips:
+                showFragment(FRAGMENT_HISTORY_TRIPS);
                 break;
             case R.id.activity_main_drawer_waiting_trips:
                 showFragment(FRAGMENT_WAITING_TRIPS);
-                break;
-            case R.id.activity_main_drawer_settings:
                 break;
             case R.id.activity_main_drawer_log_out:
                 logOut();
@@ -129,11 +141,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void showFragment(int fragmentIdentifier) {
         switch (fragmentIdentifier) {
             case FRAGMENT_WAITING_TRIPS:
-                //this.showTripItem();
                 this.showWaitingTrip();
                 break;
             case FRAGMENT_HISTORY_TRIPS:
-                //this.showProfileFragment();
+                this.showTripHistory();
                 break;
             case FRAGMENT_SETTINGS:
                 //this.showParamsFragment();
@@ -151,6 +162,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (this.waitingTripsFragment == null) this.waitingTripsFragment = new WaitingTripsFragment();
         this.startTransactionFragment(this.waitingTripsFragment);
     }
+
+    public void showTripHistory() {
+        if (this.historyTripFragment == null) this.historyTripFragment = new HistoryTripFragment();
+        this.startTransactionFragment(this.historyTripFragment);
+    }
+
 
 
     // ---

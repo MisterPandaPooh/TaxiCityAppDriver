@@ -1,15 +1,17 @@
 package example.com.taxicityappdriver.model.helpers;
 
 import android.text.TextUtils;
+import android.widget.DatePicker;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public  class Helpers {
 
     public final static SimpleDateFormat ISO_8601_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:sss'Z'");
 
-    public final static double PRICE_BY_KM = 2.0;
+
 
     public final static boolean isValidEmail(CharSequence target) {
         if (TextUtils.isEmpty(target)) {
@@ -30,6 +32,18 @@ public  class Helpers {
         int mMinutes = calendar.get(Calendar.MINUTE);
 
         return mDay+"/"+mMonth+"/"+mYear+" - "+mHours+":"+mMinutes;
+    }
+
+
+    public static Date getDateFromDatePicker(DatePicker datePicker){
+        int day = datePicker.getDayOfMonth();
+        int month = datePicker.getMonth();
+        int year =  datePicker.getYear();
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month, day);
+
+        return calendar.getTime();
     }
 
     public static String ucFirst(String chaine){

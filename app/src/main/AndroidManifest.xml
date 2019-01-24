@@ -24,6 +24,20 @@
         <service
             android:name=".services.ClosingService"
             android:stopWithTask="false" />
+
+        <service
+            android:name=".services.DriverService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver android:name=".services.MyBroadcastReceiver">
+
+            <intent-filter>
+                <action android:name="new Order" />
+            </intent-filter>
+
+        </receiver>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAc-ewv7qe8e1kQCKL1YcRNXp5Uydr0pb8" />

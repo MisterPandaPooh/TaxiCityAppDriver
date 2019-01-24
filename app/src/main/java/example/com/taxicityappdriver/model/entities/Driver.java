@@ -21,14 +21,18 @@ public class Driver {
     protected double currentLocationLong;
     protected boolean isBusy;
     protected int checkAroundAroundKm;
+    protected int totalTripsCounter;
+    protected double totalSumOfTrips;
 
-    //KEY WILL BE EMAIL
+
+//KEY WILL BE EMAIL
 
 
     @Exclude
     public String getEmail() {
         return email;
     }
+
     @Exclude
     public void setEmail(String email) {
         this.email = email;
@@ -131,12 +135,27 @@ public class Driver {
     }
 
 
-
     public boolean isBusy() {
         return isBusy;
     }
 
     public void setBusy(boolean busy) {
         isBusy = busy;
+    }
+
+    public int getTotalTripsCounter() {
+        return totalTripsCounter;
+    }
+
+    public void setTotalTripsCounter(int totalTripsCounter) {
+        this.totalTripsCounter = totalTripsCounter;
+    }
+
+    public double getTotalSumOfTrips() {
+        return totalSumOfTrips;
+    }
+
+    public void setTotalSumOfTrips(double totalSumOfTrips) {
+        this.totalSumOfTrips = totalSumOfTrips;
     }
 }

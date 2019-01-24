@@ -29,7 +29,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.model.helpers.LocationHelper;
+import example.com.taxicityappdriver.model.helpers.TripHelper;
 import example.com.taxicityappdriver.model.entities.Driver;
 import example.com.taxicityappdriver.model.entities.Trip;
 import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
@@ -55,7 +55,8 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
     private boolean isInit; //Singeton check if inited before
     private boolean contactAdded; //Singeton check if contact added  before
-    private Trip trip; //Current Trip
+    protected Trip trip; //Current Trip
+    protected float tripDistanceInKm;
 
 
     //UI ViewHolder Content Cell
@@ -64,6 +65,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     public TextView destinationAddress;
     public TextView distanceFromYou;
     public TextView tripDistance;
+    public TextView customerName;
 
     //UI ViewHolder Title View
     public TextView startingHourTitleView;
@@ -83,6 +85,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     public Button endTripButton; //End Trip
     public Button cancelButton; // Cancel Trip
     public View dividerRequested;
+    private SimpleCallBack onEndTripSimpleCallBack;
 
     //Listener
     private View.OnClickListener foldListener; // Fold the Content cell (seted By the Adapter)
@@ -112,13 +115,13 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
      */
     public void init() {
 
-        //Init References
-        bindView();
+
+        bindView(); //Init References
 
         //Prevent NullPointerException
         if (trip == null || isInit) //IsInit Singleton
             return;
-        if (startingHour == null || sourceAddress == null || destinationAddress == null || distanceFromYou == null || tripDistance == null)
+        if (startingHour == null || sourceAddress == null || destinationAddress == null || distanceFromYou == null || tripDistance == null || customerName == null)
             return;
         if (startingHourTitleView == null || destinationAddressTitleView == null || distanceFromYouTitleView == null || tripDistanceTitleView == null || tripIdTitleView == null)
             return;
@@ -139,7 +142,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     /**
      * Bind View References.
      */
-    private void bindView() {
+    protected void bindView() {
         FoldingCell cell = (FoldingCell) itemView;
 
         //TitleView
@@ -156,6 +159,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
         this.destinationAddress = cell.findViewById(R.id.trip_destination);
         this.distanceFromYou = cell.findViewById(R.id.distance_from_you);
         this.tripDistance = cell.findViewById(R.id.trip_distance);
+        this.customerName = cell.findViewById(R.id.customer_name_text_view);
 
         //UI Btn
         this.requestTripButton = cell.findViewById(R.id.request_trip_btn);
@@ -178,7 +182,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
      * Initialisation of User Interface ClickListeners
      */
 
-    private void initClickListener() {
+    protected void initClickListener() {
 
         customerButton.setOnClickListener(onCustomerClickListener());
         smsButton.setOnClickListener(onSmsClickListener());
@@ -201,14 +205,14 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     /**
      * Initialisation of User Interface Content
      */
-    private void initUIContent() {
+    protected void initUIContent() {
 
         //TitleView
         startingHourTitleView.setText(simpleDate.format(trip.getStartingHourAsDate()));
         destinationAddressTitleView.setText(trip.getDestinationAddress());
         distanceFromYouTitleView.setText(context.getString(R.string.in_progress_cell));
         tripDistanceTitleView.setText(context.getString(R.string.in_progress_cell));
-        tripIdTitleView.setText("#000");
+        tripIdTitleView.setText("Trip #" + (getAdapterPosition() + 1));
 
         //ContentCell
         startingHour.setText(simpleDate.format(trip.getStartingHourAsDate()));
@@ -216,6 +220,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
         destinationAddress.setText(trip.getDestinationAddress());
         distanceFromYou.setText(context.getString(R.string.in_progress_cell));
         tripDistance.setText(context.getString(R.string.in_progress_cell));
+        customerName.setText(trip.getCustomerName());
 
 
         //Disable Action button preventing contact the customer before requesting the trip.
@@ -328,7 +333,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
      *
      * @return The Request Trip Click Listener
      */
-    private View.OnClickListener onRequestTripClickListener() {
+    protected View.OnClickListener onRequestTripClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -346,7 +351,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
                             busyKey = trip.getKey();
 
-                            if (wasRequestByYou()) {
+                            if (wasRequestByYou() && !db.getCurrentDriver().isBusy()) {
                                 //Enable Button Action
                                 callButton.setEnabled(true);
                                 smsButton.setEnabled(true);
@@ -362,6 +367,27 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                                 cancelButton.setVisibility(View.VISIBLE);
                                 dividerRequested.setVisibility(View.VISIBLE);
                             }
+
+                            //Not needed
+                            db.getCurrentDriver().setBusy(true);
+
+                            db.updateDriver(db.getCurrentDriver(), new ActionCallBack() {
+                                @Override
+                                public void onSuccess(Object obj) {
+                                    Log.i(TAG, "onSuccess: Update Driver");
+                                }
+
+                                @Override
+                                public void onFailure(Exception exception) {
+                                    Log.e(TAG, "onFailure: ", exception);
+
+                                }
+
+                                @Override
+                                public void onProgress(String status, double percent) {
+
+                                }
+                            });
 
 
                         }
@@ -423,12 +449,12 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    private View.OnClickListener onCancelClickListener() {
+    protected View.OnClickListener onCancelClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                showDialog(new SimpleCallBack() {
+                showConfirmDialog(new SimpleCallBack() {
                     @Override
                     public void execute() {
                         cancelTrip();
@@ -439,11 +465,11 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
         };
     }
 
-    private View.OnClickListener onEndTripClickListener() {
+    protected View.OnClickListener onEndTripClickListener() {
         return new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(new SimpleCallBack() {
+                showConfirmDialog(new SimpleCallBack() {
                     @Override
                     public void execute() {
                         endTrip();
@@ -468,7 +494,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                 AlertDialog show = new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Trip Finished !")
-                        .setMessage("TOTAL COST :  23$")
+                        .setMessage("TOTAL COST : " + TripHelper.calculatePrice(tripDistanceInKm) + " $")
                         .setPositiveButton("Fine !", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -479,8 +505,29 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                         .show();
 
                 busyKey = null;
-                ((ViewGroup) itemView.getParent()).removeView(itemView);
-                getAdapterPosition();
+                if (onEndTripSimpleCallBack != null)
+                    onEndTripSimpleCallBack.execute();
+
+                //Not needed
+                db.getCurrentDriver().setBusy(false);
+
+                db.updateDriver(db.getCurrentDriver(), new ActionCallBack() {
+                    @Override
+                    public void onSuccess(Object obj) {
+                        Log.i(TAG, "onSuccess: Update Driver");
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        Log.e(TAG, "onFailure: ", exception);
+
+                    }
+
+                    @Override
+                    public void onProgress(String status, double percent) {
+
+                    }
+                });
 
             }
 
@@ -525,6 +572,28 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                 cancelButton.setVisibility(View.GONE);
                 dividerRequested.setVisibility(View.GONE);
 
+                //Change Driver Status
+                db.getCurrentDriver().setBusy(false);
+
+
+                db.updateDriver(driver, new ActionCallBack() {
+                    @Override
+                    public void onSuccess(Object obj) {
+                        Log.i(TAG, "Driver Updated");
+                    }
+
+                    @Override
+                    public void onFailure(Exception exception) {
+                        Log.e(TAG, "onFailure:  Updated Driver", exception);
+
+                    }
+
+                    @Override
+                    public void onProgress(String status, double percent) {
+
+                    }
+                });
+
 
             }
 
@@ -544,7 +613,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
     }
 
 
-    private void showDialog(final SimpleCallBack function) {
+    private void showConfirmDialog(final SimpleCallBack function) {
         AlertDialog show = new AlertDialog.Builder(context)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("Confirm Action")
@@ -627,6 +696,14 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
     }
 
+    public SimpleCallBack getOnEndTripSimpleCallBack() {
+        return onEndTripSimpleCallBack;
+    }
+
+    public void setOnEndTripSimpleCallBack(SimpleCallBack onEndTripSimpleCallBack) {
+        this.onEndTripSimpleCallBack = onEndTripSimpleCallBack;
+    }
+
 
     /**
      * Calculation of Trip distance, and distance between the driver and the customer location.
@@ -637,8 +714,9 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
         @Override
         protected Object doInBackground(Object[] objects) {
             //Calculate distance in meter and convert it to km
-            String distanceFromYouKm = LocationHelper.calculDistanceFromYou(trip, driver) / 1000 + " km";
-            String tripDistanceKm = LocationHelper.calculTripDistance(trip) / 1000 + " km";
+            tripDistanceInKm = TripHelper.calculTripDistance(trip) / 1000;
+            String distanceFromYouKm = tripDistanceInKm + " km";
+            String tripDistanceKm = TripHelper.calculTripDistance(trip) / 1000 + " km";
 
             //Update UI
             tripDistance.setText(tripDistanceKm);
@@ -657,7 +735,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
      *
      * @return 'true' if the key matching else 'false'.
      */
-    private boolean wasRequestByYou() {
+    protected boolean wasRequestByYou() {
         if (busyKey == null)
             return false;
         return busyKey.equals(trip.getKey());

@@ -24,7 +24,7 @@ import java.util.List;
 import example.com.taxicityappdriver.controller.WaitingTripAdapter;
 import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
 import example.com.taxicityappdriver.model.helpers.Helpers;
-import example.com.taxicityappdriver.model.helpers.LocationHelper;
+import example.com.taxicityappdriver.model.helpers.TripHelper;
 import example.com.taxicityappdriver.model.entities.Driver;
 import example.com.taxicityappdriver.model.entities.Trip;
 import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
@@ -303,23 +303,20 @@ public class FireBase_Manager implements BackEnd<String> {
     public void updateDriver(final Driver toUpdate, final ActionCallBack<String> action) {
         final String email = EncodeString(toUpdate.getEmail());
 
-        Log.e(TAG, "Update Started");
-        removeTrip(email, new ActionCallBack<String>() {
+        refTrips.child(email).setValue(toUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(String obj) {
-                addDriver(toUpdate, action);
+            public void onSuccess(Void aVoid) {
+                action.onSuccess(email);
+                action.onProgress("Adding trip in progress...", 100);
             }
-
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(Exception exception) {
-                action.onFailure(exception);
-            }
-
-            @Override
-            public void onProgress(String status, double percent) {
-                action.onProgress(status, percent);
+            public void onFailure(@NonNull Exception e) {
+                action.onFailure(e);
+                action.onProgress("Failed to add the trips...", 100);
             }
         });
+
 
     }
 
@@ -521,72 +518,6 @@ public class FireBase_Manager implements BackEnd<String> {
     }
 
 
-    /*public void notifyToTripList(final NotifyDataChange<List<Trip>> notifyDataChange) {
-        if (notifyDataChange != null) {
-
-            if (tripRefChildEventListener != null) {
-                notifyDataChange.onFailure(new Exception("first unNotify student list"));
-                return;
-            }
-            Trips.clear();
-
-            tripRefChildEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    Trip trip = dataSnapshot.getValue(Trip.class);
-                    String key = dataSnapshot.getKey();
-                    trip.setKey(key);
-                    Trips.add(trip);
-
-
-                    notifyDataChange.OnDataChanged(Trips);
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    Trip trip = dataSnapshot.getValue(Trip.class);
-                    String key = dataSnapshot.getKey();
-                    trip.setKey(key);
-
-
-
-                    for (int i = 0; i < Trips.size(); i++) {
-                        if (Trips.get(i).getKey().equals(key)) {
-                            Trips.set(i, trip);
-                            break;
-                        }
-                    }
-                    notifyDataChange.OnDataChanged(Trips);
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Trip trip = dataSnapshot.getValue(Trip.class);
-                    String key = dataSnapshot.getKey();
-                    trip.setKey(key);
-
-                    for (int i = 0; i < Trips.size(); i++) {
-                        if (Trips.get(i).getKey() == key) {
-                            Trips.remove(i);
-                            break;
-                        }
-                    }
-                    notifyDataChange.OnDataChanged(Trips);
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    notifyDataChange.onFailure(databaseError.toException());
-                }
-            };
-            refTrips.addChildEventListener(tripRefChildEventListener);
-        }
-    }*/
-
     public void notifyToTripList(final NotifyDataChange<List<Trip>> notifyDataChange, final CheckBooleanMethodCondition<Trip> condition) {
         if (notifyDataChange != null) {
 
@@ -703,7 +634,7 @@ public class FireBase_Manager implements BackEnd<String> {
         notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
-                return obj.getStatusAsEnum() == Trip.TripStatus.FINISHED;
+                return obj.getStatusAsEnum() == Trip.TripStatus.FINISHED && obj.getDriverEmail().equals(getCurrentDriver().getEmail());
             }
         });
     }
@@ -736,7 +667,7 @@ public class FireBase_Manager implements BackEnd<String> {
         notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
-                return LocationHelper.calculDistanceFromYou(obj, getCurrentDriver()) / 1000 < distanceInKm;
+                return TripHelper.calculDistanceFromYou(obj, getCurrentDriver()) / 1000 < distanceInKm;
             }
         });
     }
@@ -748,21 +679,23 @@ public class FireBase_Manager implements BackEnd<String> {
         notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
-                double price = LocationHelper.calculTripDistance(obj) / 1000 * Helpers.PRICE_BY_KM;
-                return (obj.getStatusAsEnum() == Trip.TripStatus.FINISHED && price > min && price < max);
+                double price = TripHelper.calculatePrice(TripHelper.calculTripDistance(obj) / 1000);
+                return (obj.getStatusAsEnum() == Trip.TripStatus.FINISHED && price > min && price < max) && obj.getDriverEmail().equals(getCurrentDriver().getEmail());
             }
         });
     }
 
 
-    //Boefore
+    //Before
     public void notifyToTripListBeforeDate(final Date date, final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
         notifyToTripList(notifyDataChange, new CheckBooleanMethodCondition<Trip>() {
             @Override
             public boolean isTrue(Trip obj) {
-                return (obj.getStartingHourAsDate().before(date));
+                if(obj.getStartingHourAsDate()==null)
+                    return false;
+                return (obj.getStartingHourAsDate().before(date)) &&  obj.getStatusAsEnum()== Trip.TripStatus.FINISHED && obj.getDriverEmail().equals(getCurrentDriver().getEmail());
             }
         });
     }

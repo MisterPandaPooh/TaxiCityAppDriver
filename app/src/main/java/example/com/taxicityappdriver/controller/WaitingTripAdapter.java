@@ -13,6 +13,7 @@ import java.util.List;
 
 import example.com.taxicityappdriver.R;
 import example.com.taxicityappdriver.model.entities.Trip;
+import example.com.taxicityappdriver.model.interfaces.SimpleCallBack;
 
 public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHolder> {
 
@@ -73,8 +74,16 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
             }
         });
 
+        viewHolder.setOnEndTripSimpleCallBack(new SimpleCallBack() {
+            @Override
+            public void execute() {
+                //Delete from the list
+                items.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, items.size());
+            }
+        });
         viewHolder.init();
-        viewHolder.tripIdTitleView.setText("Trip #" + (position + 1));
 
 
     }

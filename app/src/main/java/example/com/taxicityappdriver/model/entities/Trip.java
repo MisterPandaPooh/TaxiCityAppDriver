@@ -158,11 +158,14 @@ public class Trip {
 
     @Exclude
     public Date getStartingHourAsDate() {
+        if (startingHour == null)
+            return new Date();
         return new Date(Long.parseLong(startingHour));
     }
+
     @Exclude
     public Date getEndingHourAsDate() {
-        return  new Date(Long.parseLong(endingHour));
+        return new Date(Long.parseLong(endingHour));
     }
 
 

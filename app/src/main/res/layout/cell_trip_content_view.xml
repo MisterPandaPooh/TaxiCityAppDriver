@@ -115,6 +115,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:id="@+id/distance_from_you_lbl"
                             android:text=" Distance from you"
                             android:textSize="9sp" />
 
@@ -246,6 +247,7 @@
 
                         <TextView
                             android:layout_width="fill_parent"
+                            android:id="@+id/customer_name_text_view"
                             android:layout_height="wrap_content"
                             android:layout_margin="5dp"
                             android:drawableRight="@drawable/ic_chevron_right_black_24dp"

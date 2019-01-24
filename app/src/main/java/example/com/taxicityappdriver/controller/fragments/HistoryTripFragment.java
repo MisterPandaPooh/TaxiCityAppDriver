@@ -1,5 +1,4 @@
-package example.com.taxicityappdriver.controller;
-
+package example.com.taxicityappdriver.controller.fragments;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -10,35 +9,32 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.EditText;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.ramotion.fluidslider.FluidSlider;
 
+import java.util.Date;
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
-import example.com.taxicityappdriver.model.entities.Trip;
+import example.com.taxicityappdriver.controller.HistoryTripAdapter;
+import example.com.taxicityappdriver.controller.WaitingTripAdapter;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
+import example.com.taxicityappdriver.model.entities.Trip;
+import example.com.taxicityappdriver.model.helpers.Helpers;
 import example.com.taxicityappdriver.model.interfaces.NotifyDataChange;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import static example.com.taxicityappdriver.model.helpers.Helpers.ucFirst;
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class WaitingTripsFragment extends Fragment {
-
+public class HistoryTripFragment extends Fragment {
     public final static BackEnd db = BackEndFactory.getInstance();
     private final String TAG = "WaitingTripsFragment";
 
@@ -48,19 +44,23 @@ public class WaitingTripsFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;//SwipeRefreshLayout instance.
     private FloatingActionButton fab; //FloatingActionButton instance to activate filters.
 
-    private static boolean switchByDistanceState;
-    private static boolean switchByCityState;
-    private static int distanceSavedState;
-    private static String citySavedInstance;
+    private boolean filterBeforeDateSwitchState;
+    private boolean filterByPriceSwitchState;
+    private Date dateFilterValue;
+    private int priceFilterValue;
 
-    public WaitingTripsFragment() {
-        // Required empty public constructor
+    public HistoryTripFragment() {
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Bind View Reference
         View view = inflater.inflate(R.layout.fragment_waiting_trips, container, false);
         recyclerView = view.findViewById(R.id.mainRecycleView);
@@ -68,7 +68,7 @@ public class WaitingTripsFragment extends Fragment {
         fab = view.findViewById(R.id.fab);
 
         //Refresh Layout Listener
-        final WaitingTripsFragment MyFragment = this;
+        final HistoryTripFragment MyFragment = this;
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -91,20 +91,9 @@ public class WaitingTripsFragment extends Fragment {
         });
 
 
-        if (WaitingTripAdapter.isBusyDriver()) {
-            switchByDistanceState = false;
-            switchByCityState = false;
-        }
-
-        if (switchByDistanceState)
-            applyFilterByDistance(distanceSavedState);
-        else if (switchByCityState)
-            applyFilterByCity("Jeru");
-        else
-            initRecyclerView();
+        initRecyclerView();
 
         return view;
-
     }
 
 
@@ -121,12 +110,12 @@ public class WaitingTripsFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         //Initialisation Of data
-        db.notifyToTripListWaiting(new NotifyDataChange<List<Trip>>() {
+        db.notifyToTripListFinished(new NotifyDataChange<List<Trip>>() {
             @Override
             public void OnDataChanged(List<Trip> obj) {
                 if (recyclerView.getAdapter() == null) {
                     items = obj;
-                    WaitingTripAdapter adapter = new WaitingTripAdapter(items);
+                    HistoryTripAdapter adapter = new HistoryTripAdapter(items);
                     recyclerView.setAdapter(adapter);
 
                 } else
@@ -143,83 +132,82 @@ public class WaitingTripsFragment extends Fragment {
 
     }
 
+
+    private void applyFilterBeforeDate(Date date) {
+
+        //Reset
+        recyclerView.setAdapter(null);
+        recyclerView.setLayoutManager(null);
+
+        //Init Layout Manager for RecyclerView
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true); //Reverse Data
+        linearLayoutManager.setReverseLayout(true); //Reverse Data
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        //Initialisation Of data
+        db.notifyToTripListBeforeDate(date, new NotifyDataChange<List<Trip>>() {
+            @Override
+            public void OnDataChanged(List<Trip> obj) {
+                if (recyclerView.getAdapter() == null) {
+                    items = obj;
+                    HistoryTripAdapter adapter = new HistoryTripAdapter(items);
+                    recyclerView.setAdapter(adapter);
+
+                } else
+                    recyclerView.getAdapter().notifyDataSetChanged();
+
+
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+
+    private void applyFilterByPrice(int price) {
+        //Reset
+        recyclerView.setAdapter(null);
+        recyclerView.setLayoutManager(null);
+
+        //Init Layout Manager for RecyclerView
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setStackFromEnd(true); //Reverse Data
+        linearLayoutManager.setReverseLayout(true); //Reverse Data
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
+
+        //Initialisation Of data
+        db.notifyToTripListByAmounth(0, price, new NotifyDataChange<List<Trip>>() {
+            @Override
+            public void OnDataChanged(List<Trip> obj) {
+                if (recyclerView.getAdapter() == null) {
+                    items = obj;
+                    HistoryTripAdapter adapter = new HistoryTripAdapter(items);
+                    recyclerView.setAdapter(adapter);
+
+                } else
+                    recyclerView.getAdapter().notifyDataSetChanged();
+
+
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     @Override
     public void onDestroy() {
         db.stopNotifyToTripList();
         super.onDestroy();
-    }
-
-    public void applyFilterByDistance(int distance) {
-
-        //Reset
-        recyclerView.setAdapter(null);
-        recyclerView.setLayoutManager(null);
-
-        //Init Layout Manager for RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setStackFromEnd(true); //Reverse Data
-        linearLayoutManager.setReverseLayout(true); //Reverse Data
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
-
-        //Initialisation Of data
-        db.notifyToTripListWaitingByDistance(distance, new NotifyDataChange<List<Trip>>() {
-            @Override
-            public void OnDataChanged(List<Trip> obj) {
-                if (recyclerView.getAdapter() == null) {
-                    items = obj;
-                    WaitingTripAdapter adapter = new WaitingTripAdapter(items);
-                    recyclerView.setAdapter(adapter);
-
-                } else
-                    recyclerView.getAdapter().notifyDataSetChanged();
-
-
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-    }
-
-    public void applyFilterByCity(final String city) {
-        //Reset
-        recyclerView.setAdapter(null);
-        recyclerView.setLayoutManager(null);
-
-        //Init Layout Manager for RecyclerView
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setStackFromEnd(true); //Reverse Data
-        linearLayoutManager.setReverseLayout(true); //Reverse Data
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setHasFixedSize(true);
-        //Initialisation Of data
-        db.notifyToTripListWaitingByCity(city, new NotifyDataChange<List<Trip>>() {
-            @Override
-            public void OnDataChanged(List<Trip> obj) {
-                if (recyclerView.getAdapter() == null) {
-                    items = obj;
-                    WaitingTripAdapter adapter = new WaitingTripAdapter(items);
-                    //adapter.setHasStableIds(true);
-                    recyclerView.setAdapter(adapter);
-
-                } else
-                    recyclerView.getAdapter().notifyDataSetChanged();
-
-
-            }
-
-            @Override
-            public void onFailure(Exception exception) {
-                Toast.makeText(getContext(), "error to get trip list\n" + exception.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-
-
     }
 
 
@@ -232,62 +220,61 @@ public class WaitingTripsFragment extends Fragment {
         //Init Dialog
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.dialog_filter_waiting_trip, null);
+        View dialogView = inflater.inflate(R.layout.dialog_filter_history_trip, null);
 
 
-        final Switch filterByCity = dialogView.findViewById(R.id.filter_by_city_switch);
-        final Switch filterByDistance = dialogView.findViewById(R.id.filter_by_distance_switch);
-        final FluidSlider fluidSliderDistance = dialogView.findViewById(R.id.distance_fluid_slider);
-        final EditText cityNameEditText = dialogView.findViewById(R.id.filter_by_city_edit_text);
-        final LinearLayout linearLayourCity = dialogView.findViewById(R.id.filter_by_city_linear_layout);
-        final int minDistance = 5;
-        final int maxDistance = 600;
-        final int totalDisatance = maxDistance - minDistance;
+        final Switch filterBeforeDate = dialogView.findViewById(R.id.filter_by_date_switch);
+        final Switch filterByPrice = dialogView.findViewById(R.id.filter_by_price_switch);
+        final FluidSlider fluidSliderPrice = dialogView.findViewById(R.id.price_fluid_slider);
+        final LinearLayout linearLayourDate = dialogView.findViewById(R.id.filter_by_date_linear_layout);
+        final DatePicker datePicker = dialogView.findViewById(R.id.filter_date_picker);
+        final int min = 10;
+        final int max = 555;
+        final int totalDistance = max - min;
 
-        fluidSliderDistance.setStartText(String.valueOf(minDistance));
-        fluidSliderDistance.setEndText(String.valueOf(maxDistance));
-        fluidSliderDistance.setPositionListener(new Function1<Float, Unit>() {
+        fluidSliderPrice.setStartText(String.valueOf(min));
+        fluidSliderPrice.setEndText(String.valueOf(max));
+        fluidSliderPrice.setPositionListener(new Function1<Float, Unit>() {
             @Override
             public Unit invoke(Float pos) {
-                final String value = String.valueOf((int) (minDistance + totalDisatance * pos));
-                fluidSliderDistance.setBubbleText(value);
+                final String value = String.valueOf((int) (min + totalDistance * pos));
+                fluidSliderPrice.setBubbleText(value);
                 return Unit.INSTANCE;
             }
         });
 
 
         //Restore State
-        if (switchByDistanceState) {
-            filterByDistance.setChecked(true);
-            fluidSliderDistance.setVisibility(View.VISIBLE);
-        } else if (switchByCityState) {
-            filterByCity.setChecked(true);
-            linearLayourCity.setVisibility(View.VISIBLE);
-            if (citySavedInstance != null)
-                cityNameEditText.setText(citySavedInstance);
+        if (filterBeforeDateSwitchState) {
+            filterBeforeDate.setChecked(true);
+            linearLayourDate.setVisibility(View.VISIBLE);
+
+        } else if (filterByPriceSwitchState) {
+            filterByPrice.setChecked(true);
+            fluidSliderPrice.setVisibility(View.VISIBLE);
         }
 
-        filterByDistance.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        filterBeforeDate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switchByDistanceState = isChecked;
+                filterBeforeDateSwitchState = isChecked;
                 if (isChecked) {
-                    fluidSliderDistance.setVisibility(View.VISIBLE);
-                    filterByCity.setChecked(false);
+                    linearLayourDate.setVisibility(View.VISIBLE);
+                    filterByPrice.setChecked(false);
                 } else
-                    fluidSliderDistance.setVisibility(View.GONE);
+                    linearLayourDate.setVisibility(View.GONE);
             }
         });
 
-        filterByCity.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        filterByPrice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switchByCityState = isChecked;
+                filterByPriceSwitchState = isChecked;
                 if (isChecked) {
-                    linearLayourCity.setVisibility(View.VISIBLE);
-                    filterByDistance.setChecked(false);
+                    fluidSliderPrice.setVisibility(View.VISIBLE);
+                    filterBeforeDate.setChecked(false);
                 } else
-                    linearLayourCity.setVisibility(View.GONE);
+                    fluidSliderPrice.setVisibility(View.GONE);
             }
         });
 
@@ -296,17 +283,15 @@ public class WaitingTripsFragment extends Fragment {
         dialogBuilder.setView(dialogView);
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.setTitle("Filters");
-        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Apply", new DialogInterface.OnClickListener() {
+        alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Apply Filter", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (switchByDistanceState) {
-                    distanceSavedState = (int) (minDistance + totalDisatance * fluidSliderDistance.getPosition());
-                    applyFilterByDistance(distanceSavedState);
-                } else if (switchByCityState) {
-                    if (cityNameEditText != null && !TextUtils.isEmpty(cityNameEditText.getText())) {
-                        citySavedInstance = ucFirst(cityNameEditText.getText().toString());
-                        applyFilterByCity(citySavedInstance);
-                    }
+                if (filterByPriceSwitchState) {
+                    priceFilterValue = (int) (min + totalDistance * fluidSliderPrice.getPosition());
+                    applyFilterByPrice(priceFilterValue);
+                } else if (filterBeforeDateSwitchState) {
+                    dateFilterValue = Helpers.getDateFromDatePicker(datePicker);
+                    applyFilterBeforeDate(dateFilterValue);
                 } else {
                     initRecyclerView();
                 }
@@ -324,5 +309,6 @@ public class WaitingTripsFragment extends Fragment {
 
         alertDialog.show();
     }
+
 
 }

@@ -36,4 +36,5 @@
     <string name="id_number">ID Number</string>
     <string name="tz_hint">342532173</string>
     <string name="in_progress_cell">In progress ...</string>
+    <string name="price_trip_lbl">Price of the Trip</string>
 </resources>
