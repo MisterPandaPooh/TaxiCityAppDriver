@@ -63,7 +63,7 @@ public class FireBase_Manager implements BackEnd<String> {
 
     public void addTrip(final Trip trip, final ActionCallBack<String> action) {
         String idTrip = trip.getKey();
-        
+
         //Keep the same key when updating
         if (idTrip == null)
             idTrip = refTrips.push().getKey();
@@ -138,7 +138,7 @@ public class FireBase_Manager implements BackEnd<String> {
             @Override
             public void onFailure(@NonNull Exception e) {
                 action.onFailure(e);
-                action.onProgress("Failed to add the trips...", 100);
+                action.onProgress("Adding trip in progress...", 100);
             }
         });
 
@@ -175,7 +175,7 @@ public class FireBase_Manager implements BackEnd<String> {
 
     @Override
     public void addDriver(final Driver driver, final ActionCallBack<String> action) {
-        String email = EncodeString(driver.getEmail());
+        String email = EncodeString(driver.getEmail()); //Encode EMAIl due to database restrictions
 
 
         Log.i(TAG, "addDriver: ");
@@ -288,17 +288,17 @@ public class FireBase_Manager implements BackEnd<String> {
     public void updateDriver(final Driver toUpdate, final ActionCallBack<String> action) {
         final String email = EncodeString(toUpdate.getEmail());
 
-        refTrips.child(email).setValue(toUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
+        refDriver.child(email).setValue(toUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 action.onSuccess(email);
-                action.onProgress("Adding trip in progress...", 100);
+                action.onProgress("Update driver in progress...", 100);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 action.onFailure(e);
-                action.onProgress("Failed to add the trips...", 100);
+                action.onProgress("Update driver in progress...", 100);
             }
         });
 
@@ -312,7 +312,7 @@ public class FireBase_Manager implements BackEnd<String> {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    Log.i(TAG, "onComplete: SUCESSS");
+                    Log.i(TAG, "onComplete: SUCCESS");
                     action.onSuccess(mAuth.getCurrentUser());
                 } else {
                     action.onFailure(task.getException());
@@ -335,12 +335,15 @@ public class FireBase_Manager implements BackEnd<String> {
 
     @Override
     public void signIn(String email, String password, final ActionCallBack<Object> action) {
+
+        //SingIn in fireBaseAuth
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Log.i(TAG, "onComplete: SUCESSS");
                     action.onSuccess(mAuth.getCurrentUser());
+                    //GetCurrent Driver Signed
                     getDriver(mAuth.getCurrentUser().getEmail(), new ActionCallBack<Driver>() {
                         @Override
                         public void onSuccess(Driver obj) {
@@ -441,7 +444,7 @@ public class FireBase_Manager implements BackEnd<String> {
 
                 if (EncodeString(dataSnapshot.getKey()).equals(email)) {
                     Driver driver = dataSnapshot.getValue(Driver.class);
-                    driver.setEmail(email);
+                    driver.setEmail(DecodeString(email));
                     notifyDataChange.OnDataChanged(driver);
                     Log.i(TAG, "onChildAdded: " + currentDriver.getLastName());
                 }
@@ -453,7 +456,7 @@ public class FireBase_Manager implements BackEnd<String> {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
                 if (EncodeString(dataSnapshot.getKey()).equals(email)) {
                     Driver driver = dataSnapshot.getValue(Driver.class);
-                    driver.setEmail(email);
+                    driver.setEmail(DecodeString(email));
                     currentDriver = driver;
                 }
             }
@@ -500,6 +503,41 @@ public class FireBase_Manager implements BackEnd<String> {
         return Uri.parse(uri);
     }
 
+    public void changeUserPassword(String newPassword, final ActionCallBack action) {
+        mAuth.getCurrentUser().updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                action.onSuccess("Success to update password");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                action.onFailure(e);
+            }
+        });
+    }
+
+    public void updateProfilePicture(Uri uri, final ActionCallBack action) {
+
+        StorageReference ref = refStorageProfilePictures.child(uri.getLastPathSegment());
+        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                String downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+                if (downloadUrl != null)
+                    mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder()
+                            .setPhotoUri(Uri.parse(downloadUrl))
+                            .build());
+                action.onSuccess("Updated Sucesss");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                action.onFailure(e);
+            }
+        });
+    }
+
     private static String EncodeString(String string) {
         return string.replace(".", ",");
     }
@@ -513,7 +551,7 @@ public class FireBase_Manager implements BackEnd<String> {
         if (notifyDataChange != null) {
 
             if (tripRefChildEventListener != null) {
-                notifyDataChange.onFailure(new Exception("first unNotify student list"));
+                notifyDataChange.onFailure(new Exception("First unNotify student list"));
                 return;
             }
             Trips.clear();
@@ -526,9 +564,12 @@ public class FireBase_Manager implements BackEnd<String> {
                     trip.setKey(key);
 
                     boolean contains = false;
+
+                    //Boolean CallBack condition to Add the Trip
                     if (condition == null || condition.isTrue(trip)) {
 
 
+                        //Change if he is in the list
                         for (int i = 0; i < Trips.size(); i++) {
                             if (Trips.get(i).getKey().equals(key)) {
                                 Trips.set(i, trip);
@@ -595,6 +636,9 @@ public class FireBase_Manager implements BackEnd<String> {
     }
 
 
+    // =====================================================================================
+    // ALL THESE FUNCTION ARE BASED ON NotifyTripList but with a different boolean CallBack
+    // =====================================================================================
     public void notifyToTripListAll(final NotifyDataChange<List<Trip>> notifyDataChange) {
         if (tripRefChildEventListener != null)
             stopNotifyToTripList();
@@ -691,41 +735,6 @@ public class FireBase_Manager implements BackEnd<String> {
         });
     }
 
-
-    public void changeUserPassword(String newPassword, final ActionCallBack action) {
-        mAuth.getCurrentUser().updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                action.onSuccess("Success to update password");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                action.onFailure(e);
-            }
-        });
-    }
-
-    public void updateProfilePicture(Uri uri, final ActionCallBack action) {
-
-        StorageReference ref = refStorageProfilePictures.child(uri.getLastPathSegment());
-        ref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                String downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-                if (downloadUrl != null)
-                    mAuth.getCurrentUser().updateProfile(new UserProfileChangeRequest.Builder()
-                            .setPhotoUri(Uri.parse(downloadUrl))
-                            .build());
-                action.onSuccess("Updated Sucesss");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                action.onFailure(e);
-            }
-        });
-    }
 
     public void stopNotifyToTripList() {
         if (tripRefChildEventListener != null) {
