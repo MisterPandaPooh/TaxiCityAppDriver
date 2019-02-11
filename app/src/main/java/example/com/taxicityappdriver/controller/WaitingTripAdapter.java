@@ -1,18 +1,31 @@
 package example.com.taxicityappdriver.controller;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.ramotion.foldingcell.FoldingCell;
 
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
+import example.com.taxicityappdriver.model.backend.BackEnd;
+import example.com.taxicityappdriver.model.backend.BackEndFactory;
+import example.com.taxicityappdriver.model.entities.Driver;
 import example.com.taxicityappdriver.model.entities.Trip;
+import example.com.taxicityappdriver.model.helpers.TripHelper;
+import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
 import example.com.taxicityappdriver.model.interfaces.SimpleCallBack;
 
 public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHolder> {
@@ -21,6 +34,9 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
     private List<Trip> items;//List of all trip items.
 
     private final static String TAG = "WaitingTripAdapter";
+
+
+    public static Context context;
 
     /**
      * Check if the Driver is Busy (The busyKey is not null)
@@ -34,6 +50,7 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
 
     /**
      * Constructor
+     *
      * @param listTrips List of all trip items.
      */
     public WaitingTripAdapter(List<Trip> listTrips) {
@@ -51,6 +68,7 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
         WaitingTripViewHolder.setContext(context);
         return new WaitingTripViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(@NonNull final WaitingTripViewHolder viewHolder, final int position) {
@@ -111,5 +129,6 @@ public class WaitingTripAdapter extends RecyclerView.Adapter<WaitingTripViewHold
     public int getItemViewType(int position) {
         return position;
     }
+
 
 }

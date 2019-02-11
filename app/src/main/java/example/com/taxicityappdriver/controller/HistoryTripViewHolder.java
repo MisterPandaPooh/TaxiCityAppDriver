@@ -27,6 +27,7 @@ public class HistoryTripViewHolder extends WaitingTripViewHolder {
     @Override
     protected void initUIContent() {
         super.initUIContent();
+        new CalculateDistanceAsyncTask().doInBackground(null);
         updateUIHistory();
 
     }
@@ -71,10 +72,12 @@ public class HistoryTripViewHolder extends WaitingTripViewHolder {
         //Change distance from you
         ((TextView) itemView.findViewById(R.id.distance_from_you_lbl)).setText(context.getString(R.string.price_of_trip_lbl));
         ((TextView) itemView.findViewById(R.id.distance_from_you_lbl_title_view)).setText(context.getString(R.string.price_of_trip_lbl));
+
         distanceFromYouTitleView.setText((int)TripHelper.calculatePrice(tripDistanceInKm) + " $");
         distanceFromYou.setText(distanceFromYouTitleView.getText());
 
     }
+
 
 
     //Prevent Action on Trip => Override important methods

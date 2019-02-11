@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Configure the Toolbar
      */
     private void configureToolBar() {
-        this.toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        this.toolbar = findViewById(R.id.activity_main_toolbar);
         setSupportActionBar(toolbar);
     }
 
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Configure Drawer Layout
      */
     private void configureDrawerLayout() {
-        this.drawerLayout = (DrawerLayout) findViewById(R.id.my_drawer_layout);
+        this.drawerLayout = findViewById(R.id.my_drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * Configure NavigationView
      */
     private void configureNavigationView() {
-        this.navigationView = (NavigationView) findViewById(R.id.activity_main_nav_view);
+        this.navigationView = findViewById(R.id.activity_main_nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 

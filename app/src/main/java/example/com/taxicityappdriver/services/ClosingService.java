@@ -14,7 +14,9 @@ import example.com.taxicityappdriver.model.backend.BackEndFactory;
 
 import static example.com.taxicityappdriver.controller.WaitingTripAdapter.isBusyDriver;
 
-//TODO A REVOIR
+/**
+ * Trying to cancel a trip when closing a trip.
+ */
 public class ClosingService extends Service {
 
     private final static String TAG = "ClosingService";

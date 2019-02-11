@@ -142,6 +142,7 @@ public class FireBase_Manager implements BackEnd<String> {
             }
         });
 
+
     }
 
 
@@ -230,7 +231,7 @@ public class FireBase_Manager implements BackEnd<String> {
                 if (value == null) {
                     action.onFailure(new Exception("We can't find the request trip"));
                 } else {
-                    refTrips.child(emailKey).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    refDriver.child(emailKey).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             action.onSuccess(emailKey);
@@ -285,8 +286,13 @@ public class FireBase_Manager implements BackEnd<String> {
     }
 
     @Override
-    public void updateDriver(final Driver toUpdate, final ActionCallBack<String> action) {
+    public void updateDriver(final Driver toUpdate, final boolean refreshDriver, final ActionCallBack<String> action) {
         final String email = EncodeString(toUpdate.getEmail());
+
+        final Driver olDriver = currentDriver;
+
+        if (refreshDriver)
+            currentDriver = toUpdate;
 
         refDriver.child(email).setValue(toUpdate).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
@@ -297,6 +303,8 @@ public class FireBase_Manager implements BackEnd<String> {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                if (refreshDriver)
+                    currentDriver = olDriver;
                 action.onFailure(e);
                 action.onProgress("Update driver in progress...", 100);
             }

@@ -1,5 +1,6 @@
 package example.com.taxicityappdriver.controller;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.RemoteException;
@@ -23,6 +25,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.ramotion.foldingcell.FoldingCell;
 
 import java.text.SimpleDateFormat;
@@ -135,6 +143,8 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
         initUIContent(); //Init UI Content
 
+        new CalculateDistanceAsyncTask().doInBackground(null);
+
         isInit = true;
     }
 
@@ -246,7 +256,8 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
         }
 
-        new CalculateDistanceAsyncTask().doInBackground(null); //Calculate Distance AsyncTask
+
+        new CalculateDistanceAsyncTask().doInBackground(null);
 
     }
 
@@ -371,7 +382,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                             //Not needed
                             db.getCurrentDriver().setBusy(true);
 
-                            db.updateDriver(db.getCurrentDriver(), new ActionCallBack() {
+                            db.updateDriver(db.getCurrentDriver(), true, new ActionCallBack() {
                                 @Override
                                 public void onSuccess(Object obj) {
                                     Log.i(TAG, "onSuccess: Update Driver");
@@ -533,7 +544,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                 driver.setTotalSumOfTrips(driver.getTotalSumOfTrips() + TripHelper.calculatePrice(tripDistanceInKm));
 
 
-                db.updateDriver(db.getCurrentDriver(), new ActionCallBack() {
+                db.updateDriver(db.getCurrentDriver(), true, new ActionCallBack() {
                     @Override
                     public void onSuccess(Object obj) {
                         Log.i(TAG, "onSuccess: Update Driver");
@@ -601,10 +612,13 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                 db.getCurrentDriver().setBusy(false);
 
 
-                db.updateDriver(driver, new ActionCallBack() {
+                db.updateDriver(driver, true, new ActionCallBack() {
                     @Override
                     public void onSuccess(Object obj) {
                         Log.i(TAG, "Driver Updated");
+
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(trip.getCustomerPhone(), driver.getPhoneNumber(), "Your trip was cancelled by the driver.", null, null);
                     }
 
                     @Override
@@ -742,14 +756,15 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
      * Calculation of Trip distance, and distance between the driver and the customer location.
      * Update the UI.
      */
-    private class CalculateDistanceAsyncTask extends AsyncTask {
+    public class CalculateDistanceAsyncTask extends AsyncTask {
 
         @Override
         protected Object doInBackground(Object[] objects) {
             //Calculate distance in meter and convert it to km
+            Driver driver = db.getCurrentDriver();
             tripDistanceInKm = TripHelper.calculTripDistance(trip) / 1000;
-            String distanceFromYouKm = tripDistanceInKm + " km";
-            String tripDistanceKm = TripHelper.calculTripDistance(trip) / 1000 + " km";
+            String tripDistanceKm = (int) tripDistanceInKm + " km";
+            String distanceFromYouKm = (int) TripHelper.calculDistanceFromYou(trip, driver) / 1000 + " km";
 
             //Update UI
             tripDistance.setText(tripDistanceKm);

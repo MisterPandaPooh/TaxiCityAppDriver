@@ -186,8 +186,6 @@ public class SignUpFragment extends Fragment {
         driver.setcVV(Long.parseLong(cvvEditText.getText().toString()));
         driver.setExpireDateCreditCard(expireOnEditText.getText().toString());
         driver.setBusy(false);
-        driver.setTotalSumOfTrips(0);
-        driver.setTotalTripsCounter(0);
         //TODO
         //driver.setCurrentLocationLat();
         //driver.setCurrentLocationLong();
@@ -219,8 +217,6 @@ public class SignUpFragment extends Fragment {
                 }
 
                 btnSubmit.setEnabled(false);
-
-
 
 
                 try {

@@ -80,10 +80,11 @@ public interface BackEnd<T> {
     /**
      * Update Driver to the Database
      *
-     * @param toUpdate the driver to update.
-     * @param action   the Action CallBack
+     * @param toUpdate      the driver to update.
+     * @param refreshDriver Update the current driver to the currentDriver variable.
+     * @param action        the Action CallBack
      */
-    void updateDriver(final Driver toUpdate, final ActionCallBack<T> action);
+    void updateDriver(final Driver toUpdate, final boolean refreshDriver, final ActionCallBack<T> action);
 
 
     /* ************ AUTHENTICATION  ************ */
@@ -154,12 +155,12 @@ public interface BackEnd<T> {
      * @param uri    The URI of the image.
      * @param action The action callBack.
      */
-    public void updateProfilePicture(Uri uri, ActionCallBack<T> action);
+    void updateProfilePicture(Uri uri, ActionCallBack<T> action);
 
     /**
      * @return Current User Profile Picture
      */
-    public Uri getUserProfilePicture();
+    Uri getUserProfilePicture();
 
 
     /* ************ ONCHANGE NOTIFY LIST  ************ */
@@ -229,6 +230,7 @@ public interface BackEnd<T> {
      * Stop Notify List(s)
      */
     void stopNotifyToTripList();
+
 
 
 }

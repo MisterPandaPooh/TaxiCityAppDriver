@@ -1,8 +1,16 @@
 package example.com.taxicityappdriver.controller.fragments;
 
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -11,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,25 +29,35 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.ramotion.fluidslider.FluidSlider;
 
 import java.util.List;
 
 import example.com.taxicityappdriver.R;
 import example.com.taxicityappdriver.controller.WaitingTripAdapter;
+import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
+import example.com.taxicityappdriver.model.entities.Driver;
 import example.com.taxicityappdriver.model.entities.Trip;
 import example.com.taxicityappdriver.model.backend.BackEnd;
 import example.com.taxicityappdriver.model.backend.BackEndFactory;
+import example.com.taxicityappdriver.model.interfaces.ActionCallBack;
 import example.com.taxicityappdriver.model.interfaces.NotifyDataChange;
+import example.com.taxicityappdriver.services.MyBroadcastReceiver;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
+import static android.content.Context.LOCATION_SERVICE;
+import static android.support.v4.content.ContextCompat.getSystemService;
 import static example.com.taxicityappdriver.model.helpers.Helpers.ucFirst;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class WaitingTripsFragment extends Fragment {
+public class WaitingTripsFragment extends Fragment implements LocationListener {
 
     public final static BackEnd db = BackEndFactory.getInstance();
     private final String TAG = "WaitingTripsFragment";
@@ -48,6 +67,7 @@ public class WaitingTripsFragment extends Fragment {
     private RecyclerView recyclerView; //RecyclerView instance.
     private SwipeRefreshLayout swipeRefreshLayout;//SwipeRefreshLayout instance.
     private FloatingActionButton fab; //FloatingActionButton instance to activate filters.
+    private LocationManager locationManager;
 
     //Save state of filters
     private static boolean switchByDistanceState;
@@ -60,6 +80,7 @@ public class WaitingTripsFragment extends Fragment {
     }
 
 
+    @SuppressLint("MissingPermission")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -83,7 +104,6 @@ public class WaitingTripsFragment extends Fragment {
             }
         });
 
-
         //Click Floating Button Listener.
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,27 +113,28 @@ public class WaitingTripsFragment extends Fragment {
         });
 
 
-        if (WaitingTripAdapter.isBusyDriver()) {
-            switchByDistanceState = false;
-            switchByCityState = false;
-        }
+        locationManager = (LocationManager) getContext().getSystemService(LOCATION_SERVICE);
 
-        if (switchByDistanceState)
-            applyFilterByDistance(distanceSavedState);
-        else if (switchByCityState)
-            applyFilterByCity(citySavedInstance);
-        else
-            initRecyclerView();
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 300000,
+                1000, this);
+
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
 
         return view;
 
     }
 
 
+
     /**
      * Initialisation of the RecyclerView.
      */
     private void initRecyclerView() {
+
+        //Reset
+        recyclerView.setAdapter(null);
+        recyclerView.setLayoutManager(null);
 
         //Init Layout Manager for RecyclerView
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -142,6 +163,8 @@ public class WaitingTripsFragment extends Fragment {
                 Toast.makeText(getContext(), getString(R.string.error_getting_trip_list) + exception.toString(), Toast.LENGTH_LONG).show();
             }
         });
+
+        MyBroadcastReceiver.notifyFirst = true;
 
     }
 
@@ -348,4 +371,73 @@ public class WaitingTripsFragment extends Fragment {
         alertDialog.show();
     }
 
+
+    /**
+     * Init view with the good Recycler View
+     */
+    private void initView() {
+
+        WaitingTripAdapter.context = getContext();
+        if (WaitingTripAdapter.isBusyDriver()) {
+            switchByDistanceState = false;
+            switchByCityState = false;
+        }
+
+        if (switchByDistanceState)
+            applyFilterByDistance(distanceSavedState);
+        else if (switchByCityState)
+            applyFilterByCity(citySavedInstance);
+        else
+            initRecyclerView();
+
+    }
+
+
+    /**
+     * Getting the current location  of the driver.
+     * Update the location to the database.
+     * @param location
+     */
+    @Override
+    public void onLocationChanged(final Location location) {
+
+        final Driver driver = db.getCurrentDriver();
+        driver.setCurrentLocationLong(location.getLongitude());
+        driver.setCurrentLocationLat(location.getLatitude());
+
+        db.updateDriver(driver, true, new ActionCallBack() {
+            @Override
+            public void onSuccess(Object obj) {
+                initView();
+                Toast.makeText(getContext(),"Lat :"+location.getLatitude(),Toast.LENGTH_LONG).show();
+
+
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+
+            }
+
+            @Override
+            public void onProgress(String status, double percent) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }
