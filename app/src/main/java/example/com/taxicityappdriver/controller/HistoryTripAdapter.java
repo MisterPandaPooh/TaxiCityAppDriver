@@ -63,6 +63,9 @@ public class HistoryTripAdapter extends RecyclerView.Adapter<HistoryTripViewHold
         viewHolder.init();
     }
 
+
+
+
     @Override
     public int getItemCount() {
         return items.size();

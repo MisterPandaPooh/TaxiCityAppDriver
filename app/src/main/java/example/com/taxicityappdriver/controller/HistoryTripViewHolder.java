@@ -73,6 +73,13 @@ public class HistoryTripViewHolder extends WaitingTripViewHolder {
         ((TextView) itemView.findViewById(R.id.distance_from_you_lbl)).setText(context.getString(R.string.price_of_trip_lbl));
         ((TextView) itemView.findViewById(R.id.distance_from_you_lbl_title_view)).setText(context.getString(R.string.price_of_trip_lbl));
 
+
+    }
+
+    @Override
+    protected void updateUIDistance(String tripDistanceKm, String distanceFromYouKm ){
+        super.updateUIDistance(tripDistanceKm, distanceFromYouKm);
+
         distanceFromYouTitleView.setText((int)TripHelper.calculatePrice(tripDistanceInKm) + " $");
         distanceFromYou.setText(distanceFromYouTitleView.getText());
 

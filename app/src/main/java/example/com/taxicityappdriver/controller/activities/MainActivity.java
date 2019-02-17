@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import example.com.taxicityappdriver.controller.WaitingTripAdapter;
+import example.com.taxicityappdriver.controller.WaitingTripViewHolder;
 import example.com.taxicityappdriver.controller.fragments.SettingsFragment;
 import example.com.taxicityappdriver.services.DriverService;
 import example.com.taxicityappdriver.services.MyBroadcastReceiver;
@@ -29,6 +31,11 @@ import example.com.taxicityappdriver.model.backend.BackEndFactory;
 import static example.com.taxicityappdriver.controller.WaitingTripAdapter.isBusyDriver;
 
 
+/**
+ *  © Copyrights
+ *  Netanel COHEN SOLAL - 1444669
+ *  Raphael Amar - 1186865
+ */
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //FOR DESIGN
@@ -104,10 +111,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     private void initNavHeader() {
         final TextView name = navigationView.getHeaderView(0).findViewById(R.id.name_nav_header);
+
         name.post(new Runnable() {
             @Override
             public void run() {
-                //name.setText(db.getCurrentDriver().getFirstName()+" "+ db.getCurrentDriver().getLastName()+" - "+db.getCurrentDriver().getIdNumber());
+                if (db.getCurrentDriver() != null)
+                    name.setText(db.getCurrentDriver().getFirstName() + " " + db.getCurrentDriver().getLastName() + " - " + db.getCurrentDriver().getIdNumber());
+                else
+                    name.setText(getString(R.string.welcome_back_hint_nv_drawer));
             }
         });
 

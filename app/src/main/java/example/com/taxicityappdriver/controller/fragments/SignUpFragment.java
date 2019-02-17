@@ -181,7 +181,7 @@ public class SignUpFragment extends Fragment {
         driver.setFirstName(firstNameEditText.getText().toString());
         driver.setLastName(lastNameEditText.getText().toString());
         driver.setPhoneNumber(phoneEditText.getText().toString());
-        driver.setIdNumber(Long.parseLong(phoneEditText.getText().toString()));
+        driver.setIdNumber(Long.parseLong(idNumberEditText.getText().toString()));
         driver.setCreditCardNumber(Long.parseLong(creditCardNumber.getText().toString()));
         driver.setcVV(Long.parseLong(cvvEditText.getText().toString()));
         driver.setExpireDateCreditCard(expireOnEditText.getText().toString());

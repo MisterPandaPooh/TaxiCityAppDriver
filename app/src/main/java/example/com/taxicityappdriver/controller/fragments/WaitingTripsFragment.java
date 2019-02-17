@@ -409,7 +409,7 @@ public class WaitingTripsFragment extends Fragment implements LocationListener {
             @Override
             public void onSuccess(Object obj) {
                 initView();
-                Toast.makeText(getContext(),"Lat :"+location.getLatitude(),Toast.LENGTH_LONG).show();
+               // Toast.makeText(getContext(),"Lat :"+location.getLatitude(),Toast.LENGTH_LONG).show();
 
 
             }

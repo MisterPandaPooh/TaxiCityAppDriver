@@ -1,6 +1,5 @@
 package example.com.taxicityappdriver.controller;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -8,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.OperationApplicationException;
-import android.location.Location;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.RemoteException;
@@ -18,19 +16,12 @@ import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.ramotion.foldingcell.FoldingCell;
 
 import java.text.SimpleDateFormat;
@@ -256,8 +247,8 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
 
         }
 
-
         new CalculateDistanceAsyncTask().doInBackground(null);
+
 
     }
 
@@ -520,7 +511,7 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
                 AlertDialog show = new AlertDialog.Builder(context)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle(context.getString(R.string.title_trip_finished_dialog))
-                        .setMessage("TOTAL COST : " + TripHelper.calculatePrice(tripDistanceInKm) + " $")
+                        .setMessage("TOTAL COST : " + (int) TripHelper.calculatePrice(tripDistanceInKm) + " $")
                         .setPositiveButton(context.getString(R.string.yes_btn_finish_dialog), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -764,18 +755,30 @@ public class WaitingTripViewHolder extends RecyclerView.ViewHolder {
             Driver driver = db.getCurrentDriver();
             tripDistanceInKm = TripHelper.calculTripDistance(trip) / 1000;
             String tripDistanceKm = (int) tripDistanceInKm + " km";
-            String distanceFromYouKm = (int) TripHelper.calculDistanceFromYou(trip, driver) / 1000 + " km";
 
-            //Update UI
-            tripDistance.setText(tripDistanceKm);
-            distanceFromYou.setText(distanceFromYouKm);
+            double distance = TripHelper.calculDistanceFromYou(trip, driver) / 1000.0;
+            String distanceFromYouKm = (distance < 1) ? distance + " km" : (long) distance + " km";
 
-            tripDistanceTitleView.setText(tripDistanceKm);
-            distanceFromYouTitleView.setText(distanceFromYouKm);
+            //updateUI
+            updateUIDistance(tripDistanceKm, distanceFromYouKm);
+
 
             return null;
         }
 
+    }
+
+    /**
+     * This method is updating distance for the UI.
+     * Needed to override in history Trip fragments.
+     */
+
+    protected void updateUIDistance(String tripDistanceKm, String distanceFromYouKm) {
+        tripDistance.setText(tripDistanceKm);
+        distanceFromYou.setText(distanceFromYouKm);
+
+        tripDistanceTitleView.setText(tripDistanceKm);
+        distanceFromYouTitleView.setText(distanceFromYouKm);
     }
 
     /**

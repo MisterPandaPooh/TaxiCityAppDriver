@@ -112,7 +112,7 @@ public class SettingsFragment extends Fragment {
         });
 
         //UI setText
-        totalPricedTextView.setText(String.valueOf(db.getCurrentDriver().getTotalSumOfTrips()) + " $");
+        totalPricedTextView.setText(String.valueOf((int) db.getCurrentDriver().getTotalSumOfTrips()) + " $");
         totalTripTextView.setText(String.valueOf(db.getCurrentDriver().getTotalTripsCounter()) + " trip(s)");
 
         nameTextView.setText(db.getCurrentDriver().getFirstName() + " " + db.getCurrentDriver().getLastName() + " - " + db.getCurrentDriver().getIdNumber());
@@ -120,9 +120,9 @@ public class SettingsFragment extends Fragment {
         avatarImageView.post(new Runnable() {
             @Override
             public void run() {
-                if (db.getUserProfilePicture() == null) {
+                //if (db.getUserProfilePicture() == null) {
                     //TODO Restore Current user profile picture
-                }
+                //}
             }
         });
 

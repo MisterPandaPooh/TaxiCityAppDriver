@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TaxiCity - The Driver App</string>
+    <string name="app_name">TaxiCity - Driver</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -103,4 +103,5 @@
     <string name="success_contact_added_msg">Contact added to you phone !</string>
     <string name="price_of_trip_lbl">Price of the Trip</string>
     <string name="unbale_to_find_location">Can\'t find your current location</string>
+    <string name="welcome_back_hint_nv_drawer">Welcome Back !</string>
 </resources>
